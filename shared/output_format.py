@@ -32,6 +32,12 @@ VALID_SIZES = ("shrink512", "full")
 # Only anonymous IDs such as page_0001 are allowed, never real file names.
 PAGE_ID_PATTERN = re.compile(r"^page_\d{4,}$")
 
+# Fields every run_info.json must contain (PLAN.md section 3 and AGENTS.md "GPU rules").
+# tile_size may be null for shrink512, but the key must be there.
+REQUIRED_RUN_INFO_FIELDS = (
+    "detector", "weights", "size", "tile_size", "versions", "seconds_per_page", "seed",
+)
+
 # Column order of run_log.csv.
 RUN_LOG_COLUMNS = ["page_id", "size", "seconds", "max_value", "status"]
 
@@ -137,6 +143,17 @@ def write_run_info(out_dir, info):
         json.dump(info, handle, indent=2, sort_keys=True)
         handle.write("\n")
     return path
+
+
+def read_run_info(path):
+    """Read run_info.json and fail with a clear message if a required field is missing."""
+    with open(Path(path), encoding="utf-8") as handle:
+        info = json.load(handle)
+    # List every missing field at once so the job owner can fix them in one go.
+    missing = [name for name in REQUIRED_RUN_INFO_FIELDS if name not in info]
+    if missing:
+        raise ValueError(f"{path}: run_info.json is missing required fields: {', '.join(missing)}")
+    return info
 
 
 def append_run_log(out_dir, page_id, size, seconds, max_value, status):

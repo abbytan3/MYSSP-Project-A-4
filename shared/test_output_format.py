@@ -103,6 +103,22 @@ def test_run_files():
     assert rows[1] == ["page_0001", "shrink512", "1.250", "0.910000", "ok"]
 
 
+def test_read_run_info_checks_required_fields():
+    # A complete run_info.json is read back; a missing field is named in the error.
+    full = {name: None for name in of.REQUIRED_RUN_INFO_FIELDS}
+    with tempfile.TemporaryDirectory() as tmp:
+        folder = Path(tmp)
+        of.write_run_info(folder, full)
+        assert of.read_run_info(folder / "run_info.json") == full
+        of.write_run_info(folder, {"detector": "adcd", "size": "full"})
+        try:
+            of.read_run_info(folder / "run_info.json")
+        except ValueError as error:
+            assert "weights" in str(error) and "seed" in str(error)
+            return
+    raise AssertionError("expected ValueError")
+
+
 def test_bad_size_refused():
     # Only shrink512 and full are valid sizes.
     try:
