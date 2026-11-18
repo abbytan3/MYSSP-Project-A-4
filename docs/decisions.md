@@ -1,6 +1,6 @@
 # Decisions
 
-One dated line per fix or decision: `- YYYY-MM-DD (task ID, name): what was decided and why.`
+One dated line per method choice, result-changing fix, plan change or run problem: `- YYYY-MM-DD (task ID, name): what was chosen. Why. Chosen over: the alternative. Limitation: (if any).` Full rules in AGENTS.md, "Decisions log". This file is the source for the write-up's Methodology and Limitations sections; results never go here.
 
 - 2026-11-17 (setup, Abby): Repo created from the planning-chat drafts. Rules for every coding agent are in AGENTS.md; CLAUDE.md points to it.
 - 2026-11-17 (setup, Abby): Each member runs and analyses the detector they studied: Abby ADCD-Net, Alycia DTD, Nazhan DAF, all on one shared sample, scored by one shared script.
@@ -19,3 +19,4 @@ One dated line per fix or decision: `- YYYY-MM-DD (task ID, name): what was deci
 - 2026-11-18 (plan, Abby): No fake pages. Each run starts with 3 real pages at both sizes (format check, timing, cost estimate), then the full run; 512 for all detectors before full size.
 - 2026-11-18 (plan, Abby): Full heat maps are not saved (over 100 GB). Each page keeps only its top score and the packed pixels at 0.5, which is all the document- and location-level scoring needs.
 - 2026-11-18 (plan, Abby): DAF runs with two released weights, AnyText (editor in our set) and DiffSTE (diffusion editor not in our set); SRNet dropped. About 13,300 detector passes.
+- 2026-11-19 (process, Abby): decisions.md is the team's full record of how the runs were done, so AGENTS.md now has a "Decisions log" section: every method choice, result-changing fix, plan change and run problem gets a line with what, why and the alternative it was chosen over, in the same commit as the code; agents list their lines at the end of each task. The person copies method choices into the command centre's Decisions tab when a task completes; that tab is the source for the Methodology section. Chosen over relying on the sheet's Log, which is per session and misses in-session choices.

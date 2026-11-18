@@ -123,10 +123,27 @@ The team directs code through their agents and checks it by reading. None of the
 
 - Put a short plain-language `#` comment above each line or small block of code, saying what it does.
 - When you finish a task, say in plain words what changed, which files, and how the person can check it works.
-- Add one dated line to `docs/decisions.md` for each fix or decision (`- 2026-11-18 (T14, Alycia): ...`).
+- Record every method choice and every fix that could change a result in `docs/decisions.md`, as the "Decisions log" section below says.
 - If something is unclear, ask one question before building. Don't guess.
 - Never say a task is done unless you ran it and saw it work.
 - Remind the person to update the task on the command centre sheet when a task is finished or blocked.
+
+## Decisions log (`docs/decisions.md`)
+
+This file is the team's full record of how the experiments were actually run (the command centre's Decisions tab is the summary copied from it). The write-up's Methodology and Limitations sections, and the answers to judges' "why did you do it this way?", are written from it. Keep it complete, even when rushing.
+
+- **What gets a line:**
+  - every method choice: input sizes and tiling, pre-processing (OCR masks, re-saves, colour or format conversion), thresholds and cut-offs, how ties and edge cases are handled, seeds, which weights and versions;
+  - every fix that could change a number (a bug in reading pages, boxes, scores or IDs);
+  - every difference from `docs/PLAN.md`, however small;
+  - every run problem that affects results: pages that failed or were skipped and why, reruns, timeouts, out-of-memory, a changed GPU.
+  Tidy-ups that can't change a number (renames, comments, formatting) need no line.
+- **Format:** one dated line: what was chosen, why, and what it was chosen over. Add `Limitation:` when the choice limits what the results can claim.
+  `- 2026-11-19 (T14, Alycia): DTD reads 512×512 tiles with no overlap, because 512 is DTD's input size. Chosen over overlapping tiles, which would double the GPU time. Limitation: an edit across a tile border is split between two tiles.`
+- **When:** in the same commit as the code it describes. Never "later".
+- **No results here.** Never write scores or other findings in this file; results live in `results/`.
+- **Changing the plan:** `docs/PLAN.md` is frozen. If a choice would differ from it, stop and ask the person before building. If they agree, the decisions line records it, starting with `PLAN CHANGE:`.
+- **End of every task:** list the decision lines you added in your summary, so the person can copy the method choices into the command centre's Decisions tab (you can't edit the sheet). If there are none, say so and confirm that no method choices were made.
 
 ## Which model
 
