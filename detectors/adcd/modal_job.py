@@ -15,6 +15,7 @@ Weights must already be on the Volume (see detectors/adcd/README.md).
 Nothing about a page is ever printed: only anonymous IDs and numbers.
 """
 
+import statistics
 import sys
 from pathlib import Path
 
@@ -103,6 +104,46 @@ def _list_pages(limit=0):
     return pages[:limit] if limit > 0 else pages
 
 
+def build_run_info(of, size, gpu, versions, n_missing, n_unexpected, seconds, n_ok, n_bad, limit, started):
+    """Return the content of run_info.json for one size.
+
+    The first seven keys are the ones shared/score.py requires, spelled exactly
+    as in `of.REQUIRED_RUN_INFO_FIELDS`; tile_size is None (null) for shrink512.
+    """
+    info = {
+        # --- required by shared/score.py ---
+        "detector": "adcd",
+        "weights": ["ADCDNet.pth", "docres.pkl", "qt_table.pk"],
+        "size": size,
+        "tile_size": PIECE if size == "full" else None,
+        "versions": versions,
+        # Median seconds per page over every ok page in run_log.csv (test runs included).
+        "seconds_per_page": round(statistics.median(seconds), 3) if seconds else None,
+        "seed": SEED,
+        # --- extra detail ---
+        "shrink_longest_side": PIECE if size == "shrink512" else None,
+        "threshold_for_flagging": of.FLAG_THRESHOLD,
+        "value_scale": "softmax probability of tampered, float32 (not rounded to 8 bit)",
+        "gpu": gpu,
+        "repo_url": REPO_URL,
+        "repo_commit": REPO_COMMIT,
+        "model_load": {"missing_keys": n_missing, "unexpected_keys": n_unexpected},
+        "pages_ok": n_ok,
+        "pages_not_ok": n_bad,
+        "mean_seconds_per_page": round(statistics.mean(seconds), 3) if seconds else None,
+        "limit_used_in_last_call": limit,
+        "last_call_started_utc": started,
+        "notes": "Official loader: greyscale, re-saved as JPEG quality 100 inside the loader, DCT numbers read from it. "
+                 "full = 512x512 tiles from (0,0), white padding right/bottom, joined back, padding cropped. "
+                 "shrink512 maps resized back to page size with bilinear interpolation.",
+    }
+    # Fail now, not in scoring, if a required name is missing.
+    missing = [k for k in of.REQUIRED_RUN_INFO_FIELDS if k not in info]
+    if missing:
+        raise ValueError("run_info is missing required fields: " + ", ".join(missing))
+    return info
+
+
 # ---------------------------------------------------------------- stage 1: OCR
 @app.function(image=ocr_image, volumes={DATA: volume}, timeout=600)
 def pages_without_ocr(limit=0):
@@ -170,7 +211,6 @@ def run_adcd(size, limit=0):
     import json
     import os
     import pickle
-    import statistics
     import tempfile
     import time
     from datetime import datetime, timezone
@@ -312,31 +352,15 @@ def run_adcd(size, limit=0):
                     seconds.append(float(row["seconds"]))
                 else:
                     n_bad += 1
-    of.write_run_info(out_dir, {
-        "detector": "adcd",
-        "size": size,
-        "weights_files": ["ADCDNet.pth", "docres.pkl", "qt_table.pk"],
-        "tile_size": PIECE if size == "full" else None,
-        "shrink_longest_side": PIECE if size == "shrink512" else None,
-        "threshold_for_flagging": of.FLAG_THRESHOLD,
-        "value_scale": "softmax probability of tampered, float32 (not rounded to 8 bit)",
-        "seed": SEED,
-        "gpu": torch.cuda.get_device_name(0),
-        "repo_url": REPO_URL,
-        "repo_commit": REPO_COMMIT,
-        "versions": {name: md.version(name) for name in
-                     ["torch", "torchvision", "numpy", "opencv-python-headless", "albumentations", "pillow"]},
-        "model_load": {"missing_keys": len(missing), "unexpected_keys": len(unexpected)},
-        "pages_ok": n_ok,
-        "pages_not_ok": n_bad,
-        "median_seconds_per_page": round(statistics.median(seconds), 3) if seconds else None,
-        "mean_seconds_per_page": round(statistics.mean(seconds), 3) if seconds else None,
-        "limit_used_in_last_call": limit,
-        "last_call_started_utc": started,
-        "notes": "Official loader: greyscale, re-saved as JPEG quality 100 inside the loader, DCT numbers read from it. "
-                 "full = 512x512 tiles from (0,0), white padding right/bottom, joined back, padding cropped. "
-                 "shrink512 maps resized back to page size with bilinear interpolation.",
-    })
+    # Build run_info.json (the seven names shared/score.py requires are checked inside) and write it.
+    info = build_run_info(
+        of, size, torch.cuda.get_device_name(0),
+        {name: md.version(name) for name in
+         ["torch", "torchvision", "numpy", "opencv-python-headless", "albumentations", "pillow"]},
+        len(missing), len(unexpected), seconds, n_ok, n_bad, limit, started)
+    of.write_run_info(out_dir, info)
+    # Read it back with the shared reader, so a missing key fails the run here and not in scoring.
+    of.read_run_info(out_dir / "run_info.json")
     volume.commit()
     return {"size": size, "processed_this_call": done, "ok_in_log": n_ok, "not_ok_in_log": n_bad}
 
