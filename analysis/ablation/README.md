@@ -23,3 +23,32 @@ Output: `analysis/ablation/results/ablation_scores.csv`, one row per detector, w
 
 - **Rule B flags every page in many cells.** In most cells the tampered and untouched groups are about equal in size, so flagging every page gives precision 0.5, recall 1.0 and F1 near 0.667, which looks decent but means nothing. Read rule B only together with its false-alarm rate and the AUC. The main run (W1) found the same thing.
 - Rule A and rule B ranges collapse to a single value where a metric is exactly 0 or 1 in every resample (for example, flagging every page); that is a saturated result, not a missing range.
+
+## Paired contrasts (TextCtrl set only)
+
+Run (same input files as above, `W7` as defined there; numpy and scipy needed):
+```
+python3 analysis/ablation/make_contrast_summary.py "$W7/adcd/per_page.csv" "$W7/dtd/per_page.csv" "$W7/daf_anytext/per_page.csv" "$W7/daf_diffste/per_page.csv"
+```
+Output: `analysis/ablation/results/contrast_summary.csv` (148 rows: labels, counts, the AUC and "edit found" on each side, the difference with its 95% range, and clear yes/no). Each difference uses one bootstrap draw of documents (page ID = document) for both sides, 1,000 resamples, seed 42. "Clear" means the range excludes 0. Ranges here differ slightly from the ablation table because the bootstrap draws are not the same; the AUC point estimates are identical.
+
+- **A**: AI edit minus each recreation, same size and format (60 rows). **B**: full size minus 512, plus DAF `default` minus 512 as its own rows (48 rows). **C**: PNG minus JPG (40 rows).
+- Clear AUC differences: A 28 of 60, B full minus 512 10 of 32, B default minus 512 4 of 16, C 13 of 40.
+- Scope: TextCtrl set only, and the recreations are made from the same pages, so these are paired comparisons within one set. A star (*) below marks a clear difference.
+
+Headline rows, contrast A at PNG (difference in AUC, 95% range):
+
+| Detector | Size | n edited / untouched | AUC, AI edit | AI minus generation | AI minus copy-move | AI minus splicing |
+|---|---|---|---|---|---|---|
+| ADCD-Net | shrink512 | 100 / 100 | 0.51 | +0.00 (-0.00 to +0.01) | +0.00 (-0.02 to +0.03) | -0.00 (-0.02 to +0.01) |
+| ADCD-Net | full | 100 / 100 | 0.53 | +0.03 (+0.02 to +0.06) * | +0.05 (+0.02 to +0.09) * | +0.03 (+0.01 to +0.06) * |
+| DTD | shrink512 | 100 / 100 | 0.52 | +0.00 (-0.02 to +0.02) | +0.00 (-0.03 to +0.03) | +0.02 (+0.00 to +0.03) * |
+| DTD | full | 100 / 100 | 0.50 | +0.01 (+0.00 to +0.02) | +0.02 (-0.00 to +0.04) | +0.01 (+0.00 to +0.02) |
+| DAF AnyText weight | shrink512 | 100 / 100 | 0.51 | +0.01 (-0.00 to +0.02) | +0.00 (-0.03 to +0.03) | +0.01 (-0.00 to +0.03) |
+| DAF AnyText weight | full | 100 / 100 | 0.69 | +0.17 (+0.11 to +0.23) * | +0.19 (+0.13 to +0.25) * | +0.15 (+0.09 to +0.21) * |
+| DAF DiffSTE weight | shrink512 | 100 / 100 | 0.51 | +0.00 (-0.01 to +0.02) | +0.02 (-0.02 to +0.05) | -0.01 (-0.04 to +0.00) |
+| DAF DiffSTE weight | full | 100 / 100 | 0.85 | +0.32 (+0.26 to +0.38) * | +0.35 (+0.29 to +0.41) * | +0.31 (+0.26 to +0.37) * |
+
+The n column is for the AI-edit side; the copy-move side has 86 edited pages and the splicing side 99 (all with 100 untouched pages); every row's counts are in the file.
+
+Other formats, the other versions and the "edit found" differences are in the file. Edit found goes up wherever a detector flags more of the page, so read it together with the AUC.
