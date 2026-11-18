@@ -15,3 +15,4 @@ One dated line per fix or decision: `- YYYY-MM-DD (task ID, name): what was deci
 - 2026-11-18 (plan, Abby): Stage 2 uses Abby, Nazhan and Alycia (same 1,000 pages); the helper's file has no page names and is left out. Only analysis: people vs detectors; no rater-agreement statistic. Score 5 = looks genuine, 1 = clearly edited.
 - 2026-11-18 (plan, Abby): Rule B (cut-off by 2-fold cross-fitting) is the headline document rule; rule A (0.5, the authors' default) is reported alongside to show how it over-flags untouched pages.
 - 2026-11-18 (process, Abby): Every agent explains the task in 3 to 5 sentences before starting (AGENTS.md, first steps).
+- 2026-11-18 (process, Abby): Every figure (charts, tables, diagrams) is made with matplotlib from results files; no AI-generated images anywhere (AGENTS.md, Figures).

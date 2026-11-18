@@ -99,6 +99,14 @@ A Paradev workspace is its own git worktree on its own local branch. You're in o
 - Every reported number comes from a results file in `results/`, with its 95% range and number of pages. Write "suggests", never "proves".
 - Report weak and negative results. Report misses and false alarms separately.
 
+## Figures
+
+- **Every figure is drawn by matplotlib code**, run from a script saved in the repo next to the figure (e.g. `results/<detector>/figures/make_figures.py`). This covers every chart, table image and diagram used in the write-up, slides and video, including the pipeline diagram.
+- **Never use AI image generators** (no generated images, illustrations, icons or "improved" versions of a chart from any AI tool, including Canva's AI features). Claude may write the matplotlib code; the picture itself always comes from running that code on our results files.
+- Each figure is built only from a results file in `results/`, so anyone can rerun the script and get the same picture. Never hand-edit a figure.
+- Write-up rules for figures: axis labels with units, a legend where there is more than one series, a short title, readable in greyscale (vary marker shape or line style, not only colour). Save as PNG at 300 dpi, plus PDF for Overleaf.
+- The sample-page figure (1 to 2 anonymised synthetic pages, T46) is also drawn with matplotlib, but its script and output stay off the repo.
+
 ## Python rules
 
 - Read and write every text file as UTF-8 and say so: `open(path, encoding="utf-8")`. Alycia is on Windows; Abby and Nazhan on Macs.
