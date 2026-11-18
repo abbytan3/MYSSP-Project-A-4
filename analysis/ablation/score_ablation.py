@@ -4,8 +4,8 @@ Rule B (2-fold cross-fitted cut-off) is NOT here yet: it waits for the shared
 scoring functions from T11. False-region counts cannot be recomputed (heat maps
 were not kept), so they are left out on purpose.
 
-Usage: python3 analysis/ablation/score_ablation.py PER_PAGE_CSV [OUT_CSV]
-Add --test to run on only 3 pages per set.
+Usage: python3 analysis/ablation/score_ablation.py PER_PAGE_CSV [PER_PAGE_CSV ...] [--out FILE]
+Add --test to run on only 3 pages per set. DAF SRNet rows are skipped (PLAN.md section 3).
 """
 import csv
 import random
@@ -25,10 +25,14 @@ UNSAFE = re.compile(r"_v\d+__[0-9a-f]{10}|\.(png|jpe?g|pdf|tiff?)\b", re.I)
 GROUP = ["detector", "weights", "size", "set", "version", "format"]
 
 
-def load(path, test=False):
-    # Read as UTF-8, and refuse the file if any cell looks like a real name
-    with open(path, encoding="utf-8", newline="") as f:
-        rows = list(csv.DictReader(f))
+def load(paths, test=False):
+    # Read every file as UTF-8, and refuse it if any cell looks like a real name
+    rows = []
+    for path in paths:
+        with open(path, encoding="utf-8", newline="") as f:
+            rows += list(csv.DictReader(f))
+    # SRNet weight is not used in the project (PLAN.md section 3)
+    rows = [r for r in rows if r["weights"] != "srnet"]
     for r in rows:
         if not SAFE_ID.match(r["page"]):
             sys.exit("Unsafe page id in input: stop and check the file.")
@@ -69,22 +73,27 @@ def table(rows):
     tamp = defaultdict(list)
     clean = defaultdict(list)
     for r in rows:
-        key = (r["detector"], r["size"], r["format"], r["set"])
+        key = (r["detector"], r["weights"], r["size"], r["format"], r["set"])
         (clean if r["version"] == "untouched" else tamp)[key + (r["version"],)].append(r)
     out = {}
     for k, t in tamp.items():
-        # clean pages for this cell share its detector, size, format and set
-        out[k] = score_cell(t, clean.get(k[:4] + ("untouched",), []))
+        # clean pages for this cell share its detector, weights, size, format and set
+        out[k] = score_cell(t, clean.get(k[:5] + ("untouched",), []))
     return out
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    test = "--test" in sys.argv
+    argv = sys.argv[1:]
+    test = "--test" in argv
+    out = Path("analysis/ablation/results/ablation_rule_a_found.csv")
+    if "--out" in argv:
+        i = argv.index("--out")
+        out = Path(argv[i + 1])
+        del argv[i:i + 2]
+    args = [a for a in argv if not a.startswith("--")]
     if not args:
         sys.exit(__doc__)
-    rows = load(args[0], test)
-    out = Path(args[1]) if len(args) > 1 else Path("analysis/ablation/results/ablation_rule_a_found.csv")
+    rows = load(args, test)
     point = table(rows)
 
     # Bootstrap: resample pages (one page = one document here, since the safe
@@ -113,18 +122,19 @@ def main():
     names = ["A_precision", "A_recall", "A_f1", "A_false_alarm", "edit_found"]
     with open(out, "w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["detector", "size", "format", "set", "version", "n_tampered", "n_untouched"]
+        w.writerow(["detector", "weights", "size", "format", "set", "version", "n_tampered", "n_untouched"]
                    + [c for n in names for c in (n, n + "_lo", n + "_hi")])
         for cell in sorted(point):
-            det, size, fmt, st, ver = cell
-            nt = sum(1 for r in rows if (r["size"], r["format"], r["set"], r["version"]) == (size, fmt, st, ver))
-            nu = sum(1 for r in rows if (r["size"], r["format"], r["set"], r["version"]) == (size, fmt, st, "untouched"))
+            det, wts, size, fmt, st, ver = cell
+            same = [r for r in rows if (r["detector"], r["weights"], r["size"], r["format"], r["set"]) == (det, wts, size, fmt, st)]
+            nt = sum(r["version"] == ver for r in same)
+            nu = sum(r["version"] == "untouched" for r in same)
             vals = []
             for n in names:
                 v = point[cell][n]
                 lo, hi = ci(cell, n)
                 vals += ["" if v is None else round(v, 4), lo if lo == "" else round(lo, 4), hi if hi == "" else round(hi, 4)]
-            w.writerow([det, size, fmt, st, ver, nt, nu] + vals)
+            w.writerow([det, wts, size, fmt, st, ver, nt, nu] + vals)
     print(f"wrote {out} ({len(point)} cells, {len(keys)} pages, seed {SEED}, {N_BOOT} resamples)")
 
 
