@@ -5,18 +5,62 @@
   "n_bootstrap": 1000,
   "pages_in_sample": 1650,
   "pages_missing": {
+    "full": {
+      "count": 0,
+      "page_ids": []
+    },
     "shrink512": {
       "count": 0,
       "page_ids": []
     }
   },
   "rule_b_cutoffs_by_fold": {
+    "full": [
+      0.927822470664978,
+      0.8426690697669983
+    ],
     "shrink512": [
       0.3097923696041107,
       0.30371126532554626
     ]
   },
   "run_info": {
+    "full": {
+      "detector": "adcd",
+      "gpu": "Tesla T4",
+      "last_call_started_utc": "2026-11-18T19:30:58+00:00",
+      "limit_used_in_last_call": 0,
+      "mean_seconds_per_page": 4.082,
+      "model_load": {
+        "missing_keys": 0,
+        "unexpected_keys": 0
+      },
+      "notes": "Official loader: greyscale, re-saved as JPEG quality 100 inside the loader, DCT numbers read from it. full = 512x512 tiles from (0,0), white padding right/bottom, joined back, padding cropped. shrink512 maps resized back to page size with bilinear interpolation.",
+      "pages_not_ok": 0,
+      "pages_ok": 1650,
+      "repo_commit": "169d04d",
+      "repo_url": "https://github.com/KAHIMWONG/ACDC-Net",
+      "seconds_per_page": 4.347,
+      "seed": 42,
+      "shrink_longest_side": null,
+      "size": "full",
+      "threshold_for_flagging": 0.5,
+      "tile_size": 512,
+      "value_scale": "softmax probability of tampered, float32 (not rounded to 8 bit)",
+      "versions": {
+        "albumentations": "2.0.8",
+        "numpy": "1.26.4",
+        "opencv-python-headless": "4.11.0.86",
+        "pillow": "12.3.0",
+        "torch": "2.3.0+cu121",
+        "torchvision": "0.18.0+cu121"
+      },
+      "weights": [
+        "ADCDNet.pth",
+        "docres.pkl",
+        "qt_table.pk"
+      ]
+    },
     "shrink512": {
       "detector": "adcd",
       "gpu": "Tesla T4",
@@ -56,6 +100,7 @@
   },
   "seed": 42,
   "sizes_scored": [
-    "shrink512"
+    "shrink512",
+    "full"
   ]
 }
