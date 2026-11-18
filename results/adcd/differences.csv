@@ -1,0 +1,5 @@
+detector,comparison,size,subset,metric,difference,ci_low,ci_high,clear
+adcd,ai minus handcrafted,shrink512,group,recall_A,0.033320,-0.016374,0.077815,False
+adcd,ai minus handcrafted,shrink512,group,recall_B,0.004000,0.000000,0.010373,False
+adcd,ai minus handcrafted,shrink512,group,auc,0.032622,0.005477,0.058733,True
+adcd,ai minus handcrafted,shrink512,group,loc_recall,0.093526,0.059829,0.127583,True
