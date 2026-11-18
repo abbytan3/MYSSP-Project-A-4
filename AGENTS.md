@@ -32,7 +32,7 @@ If this file and another file disagree, stop and ask.
 
 | Folder | Holds | Who changes it |
 |---|---|---|
-| `shared/` | Sampling, upload to Modal, output format, scoring script, fake-page maker | Abby |
+| `shared/` | Sampling, upload to Modal, output format, scoring script | Abby |
 | `analysis/human/` | Stage 2 ratings: people vs detectors | Owner set on the command centre |
 | `analysis/ablation/` | Week 7 rescoring | Abby |
 | `detectors/adcd/` | ADCD-Net Modal job | Abby |
@@ -53,7 +53,7 @@ The mentor allows coding agents to look at the pages, on one condition: the data
 - You may open and inspect bank-statement pages, labels and masks on this laptop or on the Modal Volume **only after the person confirms "Help improve Claude" is off** (first steps, step 6). Look at as few pages as the task needs.
 - Real pages live in a folder outside this repo and in the private Modal Volume `a4-data`. Never move, copy or link a page, mask or heat map into the repo folder.
 - **The repo is public.** Nothing that identifies a page may be committed: no images of pages or crops, no heat maps, no real file names or doc IDs (a bank code, `_v` and a number, two underscores, then 10 hex characters), no bank names or codes, no statement text, no `sample_map.csv`. Only anonymous page IDs (`page_0001`) and numbers.
-- Test new code on 3 to 20 generated fake pages first, then on 3 real pages, then the full run.
+- Test order: 3 real pages at both sizes first (checks the output format and timing), then the full run. No fake pages.
 - Figures in the repo show only numbers (charts). The write-up may show 1 to 2 anonymised synthetic sample pages, which are added in Overleaf by the team, never through the repo.
 - `.githooks/pre-commit` blocks image, map and archive files outside `results/*/figures/`, large files, token-like strings, and anything that looks like a real file name. Never bypass it (`--no-verify` is forbidden).
 - Never run `modal token` commands. The GPU token, the organisers' PDF and any `.env` file never go in the repo, a commit message, a printout or a chat.
@@ -89,7 +89,9 @@ A Paradev workspace is its own git worktree on its own local branch. You're in o
 ## GPU (Modal) rules
 
 - The team shares 100 USD of credit and Modal has no automatic spending cut-off.
-- Test on `gpu="T4"` first, on fake pages. Before any real run, time 20 fake pages and tell the person the estimated GPU hours and cost from Modal's current price list for that GPU. Wait for a yes.
+- Use `gpu="T4"` first. Every run starts with 3 real pages at both sizes: check the output matches `docs/PLAN.md` section 3, then tell the person the estimated GPU hours and cost for all pages from the seconds per page and Modal's current price list for that GPU. Wait for a yes before the rest runs.
+- Run `shrink512` for all pages before `full`, so results exist early.
+- Never save full heat maps; save only the compact `.npz` output in `docs/PLAN.md` section 3.
 - Only one real run per detector at a time. Each detector gets its own Modal image (its own Python and package versions), so environments never clash.
 - Save every run's settings (seed, sizes, weights, versions) next to its results.
 
@@ -112,7 +114,7 @@ A Paradev workspace is its own git worktree on its own local branch. You're in o
 - Read and write every text file as UTF-8 and say so: `open(path, encoding="utf-8")`. Alycia is on Windows; Abby and Nazhan on Macs.
 - Build paths with `pathlib`. No backslashes, no absolute paths to anyone's laptop.
 - Set a seed for anything random, and record it.
-- Give long scripts a small test mode (3 fake pages) and run it first.
+- Give long scripts a small test mode (3 pages) and run it first.
 - Add a new package with its version to the requirements file of the folder that needs it.
 
 ## How to explain your work

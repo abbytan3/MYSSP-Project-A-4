@@ -19,8 +19,8 @@ Jia Yu's anonymised bank-statement dataset (stage 1 split, real pages only)
   → keep pages whose reviewer kept them in stage 1
   → sample: all 506 kept AI-edited pages + 500 kept handcrafted pages + their untouched originals (655)
   → rename to anonymous IDs (page_0001 …), upload to the private Modal Volume
-  → run ADCD-Net, DTD, DAF (3 weights), released weights, at 512 and full size
-  → heat maps (DAF: boxes) → flagged regions at 0.5
+  → run ADCD-Net, DTD, DAF (AnyText and DiffSTE weights), released weights, 512 first, then full size
+  → per page: top score + flagged pixels at 0.5 (DAF: boxes) → flagged regions
   → one shared scoring script: document level + location level, 95% ranges
   → breakdowns: AI vs handcrafted, editor/method, capture condition, input size, human grade
   → stage 2 human ratings on the same real pages: people vs detectors
@@ -53,10 +53,11 @@ Jia Yu's anonymised bank-statement dataset (stage 1 split, real pages only)
 
 ## 2. Storage and compute
 
-- **Modal Volume `a4-data`** (private, team workspace): `pages/<page_id>.<ext>`, `meta/sample.csv` (anonymous ID, group, editor or method, capture, n_edits, boxes), `maps/<detector>/<size>/<page_id>.npy`, `results/`.
+- **Modal Volume `a4-data`** (private, team workspace): `pages/<page_id>.<ext>`, `meta/sample.csv` (anonymous ID, group, editor or method, capture, n_edits, boxes), `out/<detector>/<size>/<page_id>.npz` (compact output, see section 3), `results/`.
 - Abby uploads the sample once. Teammates never download pages; their detector jobs read from the Volume.
-- GPU: start on T4. Time 20 fake pages per detector and get a yes before the real run.
-- Size of the run: about 1,661 pages × 2 sizes × 5 detector weights ≈ 16,600 detector passes.
+- GPU: start on T4. **First step of every run:** 3 real pages at both sizes. It checks the output format and gives seconds per page; the person gets the cost estimate and says yes before the rest runs. No fake pages.
+- Order: the `shrink512` run for all detectors first (fast, so every detector has results early), then `full`.
+- Size of the run: about 1,661 pages × 2 sizes × 4 detector weights ≈ 13,300 detector passes.
 
 ## 3. Detectors
 
@@ -64,11 +65,11 @@ Jia Yu's anonymised bank-statement dataset (stage 1 split, real pages only)
 |---|---|---|---|
 | ADCD-Net (ICCV 2025) | Abby | Released `ADCDNet.pth` + `docres.pkl` | Needs OCR text masks (PaddleOCR) as in Week 5; re-saves pages itself |
 | DTD (CVPR 2023) | Alycia | Released DocTamper weights | Reads JPEG only: re-save PNG pages at quality 100 just before reading, and log it |
-| DAF (from the OSTF paper) | Nazhan | Released SRNet, AnyText and DiffSTE weights (team Drive) | Outputs boxes with scores |
+| DAF (from the OSTF paper) | Nazhan | Released AnyText and DiffSTE weights (team Drive); SRNet weight not used | Outputs boxes with scores. AnyText = an editor in our set (seen); DiffSTE = a diffusion editor not in our set (unseen) |
 
 - Used exactly as released. No retraining or fine-tuning.
 - **Two input sizes for every detector:** `shrink512` (longest side 512 px) and `full` (full size, cut into each detector's own tile size, no overlap, joined back).
-- **Output format (shared, required):** one heat map per page and size, the same height and width as the original page, `float16` values 0 to 1, saved as `maps/<detector>/<size>/<page_id>.npy`. DAF: fill each box with its score (keep the maximum where boxes overlap), 0 elsewhere. Every job also writes `run_info.json` (weights, sizes, tile size, versions, seconds per page) and `run_log.csv` (page_id, size, seconds, max_value, status).
+- **Output format (shared, required):** full heat maps are **not** saved. Each job builds the page-sized heat map in memory (values 0 to 1, same height and width as the original page; DAF: fill each box with its score, keeping the maximum where boxes overlap, 0 elsewhere) and saves only `out/<detector>/<size>/<page_id>.npz` (`np.savez_compressed`) holding `top` (the page's highest score, float32), `shape` (height, width) and `flag` (the pixels ≥ 0.5, packed with `np.packbits`). This is all the scoring needs, because no pixel-level results are reported and the threshold is fixed at 0.5. Every job also writes `run_info.json` (weights, sizes, tile size, versions, seconds per page) and `run_log.csv` (page_id, size, seconds, max_value, status).
 
 ## 4. Scoring (one shared script for all detectors)
 

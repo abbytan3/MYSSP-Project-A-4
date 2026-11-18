@@ -16,3 +16,6 @@ One dated line per fix or decision: `- YYYY-MM-DD (task ID, name): what was deci
 - 2026-11-18 (plan, Abby): Rule B (cut-off by 2-fold cross-fitting) is the headline document rule; rule A (0.5, the authors' default) is reported alongside to show how it over-flags untouched pages.
 - 2026-11-18 (process, Abby): Every agent explains the task in 3 to 5 sentences before starting (AGENTS.md, first steps).
 - 2026-11-18 (process, Abby): Every figure (charts, tables, diagrams) is made with matplotlib from results files; no AI-generated images anywhere (AGENTS.md, Figures).
+- 2026-11-18 (plan, Abby): No fake pages. Each run starts with 3 real pages at both sizes (format check, timing, cost estimate), then the full run; 512 for all detectors before full size.
+- 2026-11-18 (plan, Abby): Full heat maps are not saved (over 100 GB). Each page keeps only its top score and the packed pixels at 0.5, which is all the document- and location-level scoring needs.
+- 2026-11-18 (plan, Abby): DAF runs with two released weights, AnyText (editor in our set) and DiffSTE (diffusion editor not in our set); SRNet dropped. About 13,300 detector passes.

@@ -72,7 +72,7 @@ Run the GPU check from the PDF, section 2: save its `gpu_check.py` in any folder
 modal run gpu_check.py
 ```
 
-**Costs:** the team shares 100 USD of GPU credit and nothing stops spending automatically. Always test on a T4 first, and on 20 generated fake pages before any real run.
+**Costs:** the team shares 100 USD of GPU credit and nothing stops spending automatically. Always start on a T4, and run 3 real pages first to get the time per page and the cost before the full run.
 
 ## 4. Claude Code
 
@@ -157,7 +157,7 @@ Start each task with one message to Claude Code:
 I'm <Abby / Alycia / Nazhan>, working on task T<number>. Read AGENTS.md first and summarise the rules, then read docs/PLAN.md and my task.
 ```
 
-Claude then checks your git details and that you're up to date, lists the files it will change, builds and tests on fake pages, and tells you the one command to start the real run yourself. When the task is done: check the result, commit, push, update the sheet.
+Claude then checks your git details and that you're up to date, lists the files it will change, tests on 3 real pages, tells you the cost, and tells you the one command to start the real run yourself. When the task is done: check the result, commit, push, update the sheet.
 
 ## If something goes wrong
 
