@@ -4,6 +4,7 @@ Run (needs numpy and scipy; `shared/score.py` from T11 supplies rule A, rule B, 
 `python3 analysis/ablation/score_ablation.py <the five per_page.csv files> [--test]` (`--test` keeps 12 pages per set).
 Output: `analysis/ablation/results/ablation_scores.csv`, one row per detector, weights, size, format, set and edit type, with each metric and its 95% range.
 
+- **Rule B and AUC come from `shared/score.py` (T11, commit 2abe755).** The T11 real-page check of that file is still pending, so rule B and AUC must be rerun if it changes.
 - **Not included: false-region counts.** The Week 7 heat maps were not kept, so regions that overlap no box cannot be recomputed. Location precision and location F1 are therefore not reported here; only "edit found" (`loc_recall`) is.
 - Rule A: a page is "tampered" if any pixel is flagged (`flagged_any`). Rule B: tampered if the page's top score (`max_value`) passes a cut-off chosen by 2-fold cross-fitting on the other half of the documents (the cut-offs used are in the last two columns). AUC comes from the top scores. Clean pages for each cell are the `untouched` rows of the same detector, weights, size, format and set.
 - Edit found = the file's `detected` column (1 when a region overlaps the edit box; equals recall > 0 on every tampered row).
