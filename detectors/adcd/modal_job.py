@@ -15,6 +15,8 @@ Weights must already be on the Volume (see detectors/adcd/README.md).
 Nothing about a page is ever printed: only anonymous IDs and numbers.
 """
 
+import csv
+import json
 import statistics
 import sys
 from pathlib import Path
@@ -376,6 +378,93 @@ def run_adcd(size, limit=0, names=""):
     return {"size": size, "processed_this_call": done, "ok_in_log": n_ok, "not_ok_in_log": n_bad}
 
 
+# ---------------------------------------------------------------- stage checks
+@app.function(image=ocr_image, volumes={DATA: volume}, timeout=3600)
+def check_stage(kind, size="shrink512"):
+    """Check one finished stage on the Volume. Returns numbers and anonymous IDs only.
+
+    kind "ocr":  a mask exists for every page, has the page's height and width, and
+                 at most 1% of masks are completely empty.
+    kind "adcd": a result for every page, no failed page, every .npz opens with top in
+                 0..1 and the page's shape, run_info.json has the required keys, and at
+                 least 90% of pages have a top score above 0.
+    """
+    import cv2
+    import numpy as np
+    sys.path.insert(0, "/app")
+    import output_format as of
+    # Make sure this container sees everything the earlier stage committed.
+    volume.reload()
+    pages = _list_pages()
+    res = {"kind": kind, "size": size if kind == "adcd" else None, "n_pages": len(pages)}
+    cap = 50
+    if kind == "ocr":
+        missing, wrong, empty = [], [], []
+        for page in pages:
+            mask_path = Path(OCR_DIR) / (page.stem + ".png")
+            if not mask_path.exists():
+                missing.append(page.stem)
+                continue
+            img = cv2.imread(str(page), cv2.IMREAD_COLOR)
+            mask = cv2.imread(str(mask_path), cv2.IMREAD_GRAYSCALE)
+            if img is None or mask is None or mask.shape != img.shape[:2]:
+                wrong.append(page.stem)
+            elif not mask.any():
+                empty.append(page.stem)
+        res.update({
+            "masks_found": len(pages) - len(missing),
+            "missing_ids": missing[:cap], "n_missing": len(missing),
+            "wrong_shape_ids": wrong[:cap], "n_wrong_shape": len(wrong),
+            "n_empty_masks": len(empty), "empty_ids": empty[:cap],
+            "empty_share_pct": round(100 * len(empty) / max(len(pages), 1), 3),
+        })
+        res["passed"] = (not missing) and (not wrong) and len(empty) <= 0.01 * len(pages)
+        return res
+    out_dir = of.output_dir(OUT_ROOT, "adcd", size)
+    absent, bad, tops = [], [], []
+    for page in pages:
+        npz = out_dir / (page.stem + ".npz")
+        if not npz.exists():
+            absent.append(page.stem)
+            continue
+        try:
+            out = of.load_page_output(npz)
+            img = cv2.imread(str(page), cv2.IMREAD_COLOR)
+            if not (0.0 <= out["top"] <= 1.0) or img is None or out["shape"] != img.shape[:2]:
+                bad.append(page.stem)
+            else:
+                tops.append(out["top"])
+        except Exception:  # noqa: BLE001 - an unreadable file counts as bad
+            bad.append(page.stem)
+    # Pages whose latest run_log row is not ok (a failed page has no .npz, so it shows in `absent` too).
+    failed = []
+    log_path = out_dir / "run_log.csv"
+    if log_path.exists():
+        last = {}
+        with open(log_path, encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle):
+                last[row["page_id"]] = row["status"]
+        failed = sorted(k for k, v in last.items() if v != "ok")
+    info_ok, info_missing = False, list(of.REQUIRED_RUN_INFO_FIELDS)
+    if (out_dir / "run_info.json").exists():
+        info = json.load(open(out_dir / "run_info.json", encoding="utf-8"))
+        info_missing = [k for k in of.REQUIRED_RUN_INFO_FIELDS if k not in info]
+        info_ok = not info_missing
+    n_pos = sum(1 for t in tops if t > 0.0)
+    share_pos = n_pos / max(len(pages), 1)
+    res.update({
+        "results_found": len(pages) - len(absent),
+        "absent_ids": absent[:cap], "n_absent": len(absent),
+        "failed_ids": failed[:cap], "n_failed": len(failed),
+        "bad_ids": bad[:cap], "n_bad": len(bad),
+        "run_info_ok": info_ok, "run_info_missing_keys": info_missing,
+        "pages_top_above_0": n_pos, "share_top_above_0_pct": round(100 * share_pos, 2),
+        "top_min": round(min(tops), 4) if tops else None, "top_max": round(max(tops), 4) if tops else None,
+    })
+    res["passed"] = (not absent) and (not failed) and (not bad) and info_ok and share_pos >= 0.9
+    return res
+
+
 # ---------------------------------------------------------------- entry point
 @app.local_entrypoint()
 def main(stage: str, size: str = "shrink512", limit: int = 0, pages: str = ""):
@@ -388,5 +477,11 @@ def main(stage: str, size: str = "shrink512", limit: int = 0, pages: str = ""):
         print("OCR masks made:", made)
     elif stage == "adcd":
         print(run_adcd.remote(size, limit, pages))
+    elif stage in ("check_ocr", "check_adcd"):
+        result = check_stage.remote("ocr" if stage == "check_ocr" else "adcd", size)
+        # One machine-readable line (anonymous IDs and numbers only) for the chain script.
+        print("CHECK " + json.dumps(result))
+        if not result["passed"]:
+            raise SystemExit(1)
     else:
-        raise SystemExit("stage must be 'ocr' or 'adcd'")
+        raise SystemExit("stage must be 'ocr', 'adcd', 'check_ocr' or 'check_adcd'")
