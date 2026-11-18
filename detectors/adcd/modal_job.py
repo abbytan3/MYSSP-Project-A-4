@@ -1,7 +1,7 @@
 """ADCD-Net Modal job (T13). Two stages, both run from this laptop:
 
   1. OCR masks (CPU, many containers):
-       modal run detectors/adcd/modal_job.py --stage ocr [--limit 3]
+       modal run detectors/adcd/modal_job.py --stage ocr [--limit 3 | --pages page_0001,page_0003,page_0009]
   2. ADCD-Net (one T4 GPU, one size at a time):
        modal run detectors/adcd/modal_job.py --stage adcd --size shrink512 [--limit 3]
        modal run detectors/adcd/modal_job.py --stage adcd --size full      [--limit 3]
@@ -51,7 +51,9 @@ COMMIT_EVERY = 25
 
 # Folder of this file, and the shared folder (both are copied into the images).
 HERE = Path(__file__).resolve().parent
-SHARED = HERE.parents[1] / "shared"
+# Inside the Modal container this file sits at /root, which has no grandparent folder; the
+# paths are only used on the laptop when the image is built, so any value is fine there.
+SHARED = HERE.parents[1] / "shared" if len(HERE.parents) > 1 else HERE
 
 app = modal.App("a4-adcd")
 volume = modal.Volume.from_name(VOLUME_NAME)
@@ -95,11 +97,20 @@ ocr_image = (
 )
 
 
-def _list_pages(limit=0):
+def _list_pages(limit=0, names=""):
     # All page files on the Volume whose name is an anonymous ID, sorted.
     sys.path.insert(0, "/app")
     from output_format import PAGE_ID_PATTERN
     pages = sorted(p for p in Path(PAGES_DIR).iterdir() if PAGE_ID_PATTERN.match(p.stem))
+    # Named pages (e.g. "page_0001,page_0003,page_0009"): exactly these, in the order given.
+    if names:
+        wanted = [n.strip() for n in names.split(",") if n.strip()]
+        by_id = {p.stem: p for p in pages}
+        unknown = [n for n in wanted if n not in by_id]
+        # Say which IDs are wrong (anonymous IDs only), never guess.
+        if unknown:
+            raise ValueError("pages not found on the Volume: " + ", ".join(unknown))
+        return [by_id[n] for n in wanted]
     # Test mode: only the first `limit` pages.
     return pages[:limit] if limit > 0 else pages
 
@@ -146,9 +157,9 @@ def build_run_info(of, size, gpu, versions, n_missing, n_unexpected, seconds, n_
 
 # ---------------------------------------------------------------- stage 1: OCR
 @app.function(image=ocr_image, volumes={DATA: volume}, timeout=600)
-def pages_without_ocr(limit=0):
+def pages_without_ocr(limit=0, names=""):
     # IDs of pages that still have no OCR mask (this makes the stage resumable).
-    return [p.name for p in _list_pages(limit) if not (Path(OCR_DIR) / (p.stem + ".png")).exists()]
+    return [p.name for p in _list_pages(limit, names) if not (Path(OCR_DIR) / (p.stem + ".png")).exists()]
 
 
 @app.function(image=ocr_image, volumes={DATA: volume}, timeout=3600, max_containers=OCR_MAX_CONTAINERS)
@@ -204,7 +215,7 @@ def ocr_chunk(names):
 
 # ---------------------------------------------------------------- stage 2: ADCD-Net
 @app.function(image=adcd_image, gpu="T4", volumes={DATA: volume}, timeout=6 * 3600)
-def run_adcd(size, limit=0):
+def run_adcd(size, limit=0, names=""):
     """Run ADCD-Net on every page at one size and save the compact outputs."""
     import csv
     import importlib.metadata as md
@@ -320,7 +331,7 @@ def run_adcd(size, limit=0):
 
     out_dir = of.output_dir(OUT_ROOT, "adcd", size)
     started = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    pages = _list_pages(limit)
+    pages = _list_pages(limit, names)
     done = 0
     for page in pages:
         page_id = page.stem
@@ -367,15 +378,15 @@ def run_adcd(size, limit=0):
 
 # ---------------------------------------------------------------- entry point
 @app.local_entrypoint()
-def main(stage: str, size: str = "shrink512", limit: int = 0):
-    # stage: "ocr" or "adcd". limit: 0 = all pages, 3 = the first 3 (the test run).
+def main(stage: str, size: str = "shrink512", limit: int = 0, pages: str = ""):
+    # stage: "ocr" or "adcd". limit: 0 = all pages. pages: comma-separated anonymous IDs (the agreed test pages).
     if stage == "ocr":
-        todo = pages_without_ocr.remote(limit)
+        todo = pages_without_ocr.remote(limit, pages)
         print("pages still needing an OCR mask:", len(todo))
         chunks = [todo[i:i + OCR_CHUNK] for i in range(0, len(todo), OCR_CHUNK)]
         made = sum(ocr_chunk.map(chunks))
         print("OCR masks made:", made)
     elif stage == "adcd":
-        print(run_adcd.remote(size, limit))
+        print(run_adcd.remote(size, limit, pages))
     else:
         raise SystemExit("stage must be 'ocr' or 'adcd'")
