@@ -1,0 +1,21 @@
+# Package versions of the ADCD-Net GPU image (the set that worked in Week 5/7, env_versions_2A.txt).
+# The Modal job installs these itself (detectors/adcd/modal_job.py); this file is the record.
+# Python 3.10
+torch==2.3.0+cu121
+torchvision==0.18.0+cu121
+numpy==1.26.4
+opencv-python-headless==4.11.0.86
+albumentations==2.0.8
+# Not pinned in Week 7 (versions were not recorded); the run's run_info.json logs what was installed.
+lmdb
+six
+pillow
+tqdm
+einops
+efficientnet_pytorch
+tensorboard
+# Built from source: pip install --no-build-isolation jpeg2dct (needs setuptools<70, libjpeg-dev, build-essential)
+# ADCD-Net code: https://github.com/KAHIMWONG/ACDC-Net at commit 169d04d
+
+# Separate CPU image for the OCR masks (not pinned in Week 7 either; versions are logged in ocr_logs/):
+# numpy<2, paddlepaddle, paddleocr, opencv-python-headless
