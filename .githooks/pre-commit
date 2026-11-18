@@ -1,0 +1,17 @@
+#!/bin/sh
+# Runs the NDA check before every commit. Turned on once per clone with:
+#   git config core.hooksPath .githooks
+# (Paradev's .superset/setup.sh does this for you.)
+
+# go to the top of the repo so paths are relative to it
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+# use python3 if it exists (Mac), otherwise python (Windows)
+if command -v python3 >/dev/null 2>&1; then
+  PY=python3
+else
+  PY=python
+fi
+
+# run the check; a non-zero exit stops the commit
+exec "$PY" scripts/check_nda.py

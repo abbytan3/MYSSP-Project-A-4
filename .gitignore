@@ -1,0 +1,67 @@
+# ---- NDA: no page images, heat maps, archives or documents in this public repo ----
+# Images are only allowed as chart figures under results/<detector>/figures/ (see the allow-list at the end)
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.bmp
+*.webp
+*.gif
+# Heat maps and arrays
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+# Archives and documents (the organisers' Modal PDF must never be committed)
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.pdf
+# Any local data folders, in case someone makes one by mistake
+data/
+nda/
+real/
+pages/
+maps/
+
+# ---- Secrets ----
+.env
+.env.*
+!.env.example
+.modal.toml
+# Optional local list of words the NDA check blocks (e.g. bank names); never committed
+.nda_terms
+# Anonymous ID -> real file name map; stays on Abby's Mac and the Modal Volume only
+sample_map.csv
+# Stage 1/2 raw files (hold real file names) and filtering-site logins
+decisions*.json
+decisions*.jsonl
+*_ratings_latest.json
+users.json
+labels.jsonl
+assignment.csv
+manifest.jsonl
+
+# ---- Python ----
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ---- Claude Code personal settings ----
+.claude/settings.local.json
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db
+
+# ---- Allow-list: chart figures made from score tables only ----
+!results/*/figures/
+!results/*/figures/*.png
+!docs/figures/
+!docs/figures/*.png
