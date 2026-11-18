@@ -1,15 +1,15 @@
-# Week 7 ablation (T20), part 1: rule A and "edit found"
+# Week 7 ablation (T20): document-level rules A and B, AUC and "edit found"
 
-Run: `python3 analysis/ablation/score_ablation.py PER_PAGE_CSV` (add `--test` for 3 pages per set).
-Output: `analysis/ablation/results/ablation_rule_a_found.csv` (one row per detector, size, format, set, version).
+Run (needs numpy and scipy; `shared/score.py` from T11 supplies rule A, rule B, AUC and the bootstrap):
+`python3 analysis/ablation/score_ablation.py <the five per_page.csv files> [--test]` (`--test` keeps 12 pages per set).
+Output: `analysis/ablation/results/ablation_scores.csv`, one row per detector, weights, size, format, set and edit type, with each metric and its 95% range.
 
-- **Not included: false-region counts.** The Week 7 heat maps were not kept, so regions that overlap no box cannot be recomputed. Location precision and location F1 are therefore not reported here; only "edit found" (location recall) is.
-- **Not included yet: rule B** (cross-fitted cut-off). It needs the shared scoring functions from T11; this part will be added after they are pushed to `main`.
-- Rule A: a page is "tampered" if any pixel is flagged (`flagged_any`). Clean pages are the `untouched` rows of the same detector, size, format and set.
-- Edit found = the file's `detected` column (1 when a region overlaps the edit box; checked: it equals recall > 0 on every tampered row).
+- **Not included: false-region counts.** The Week 7 heat maps were not kept, so regions that overlap no box cannot be recomputed. Location precision and location F1 are therefore not reported here; only "edit found" (`loc_recall`) is.
+- Rule A: a page is "tampered" if any pixel is flagged (`flagged_any`). Rule B: tampered if the page's top score (`max_value`) passes a cut-off chosen by 2-fold cross-fitting on the other half of the documents (the cut-offs used are in the last two columns). AUC comes from the top scores. Clean pages for each cell are the `untouched` rows of the same detector, weights, size, format and set.
+- Edit found = the file's `detected` column (1 when a region overlaps the edit box; equals recall > 0 on every tampered row).
 - **Coverage:** four detector/weight combinations from the `eval_outputs_safe/*/per_page.csv` files: ADCD-Net, DTD, DAF (AnyText weight) and DAF (DiffSTE weight). The DAF SRNet file is excluded by Abby's decision, to match the main study's 2 DAF weights (PLAN.md section 3: "SRNet weight not used"), although Week 7 ran 3 weights. Limitation: Week 7 figures that used the SRNet weight can't be reproduced from this table. All five files hold the same 198 (set, page ID) pairs, so pages are paired across detectors. DAF also has a third size, `default`, besides `shrink512` and `full`; it is reported as is.
-- Ranges: 95% from 1,000 bootstrap resamples, seed 42. The unit is the source page (set + page ID): one draw takes all of that page's rows (every version, format, size and detector) together, never single rows. If a page ID is the same source page for all 5 versions and both formats, this is resampling by document. The file has no document ID, so that is assumed, not checked.
 - The `untouched` pages are shared across versions, so cells are not independent.
-- Page IDs are `page_NNNN` (TextCtrl) and `imgNN` (AnyText, DiffSTE); both are anonymous, and are keyed with the set name so they never clash.
 - Check against Week 5: ADCD-Net, TextCtrl, 512, PNG, AI edit gives edit found 5/100 and 84/100 untouched pages flagged by rule A. Both match.
 - **Page counts match the Week 7 design.** Each file holds 939 images per size and format (TextCtrl 485, AnyText 227, DiffSTE 227), 1,878 rows per size over PNG and JPG. The AnyText and DiffSTE sets share the same 49 source pages, and their untouched, generation, splicing and copy-move versions are the same images listed under both sets: 49 + 49 + 45 + 35 = 178 per format. Counting them once gives 939 - 178 = 761 images, and 761 x 2 formats = 1,522, the design's total. Checked in all four files: every one of these rows has identical `max_value` and `flagged_any` in both sets (0 differ). These 178 images per format are not independent across the two sets: never pool their untouched or older-edit rows across AnyText and DiffSTE. Only the `ai_edit` rows differ between the two sets. For any pooled result, group by source page across the two sets.
+- Documents: the page ID is the source page shared by all 5 versions and both formats, and AnyText and DiffSTE share their `imgNN` pages, so one page ID is one document (assumed from the file, which has no document ID). The 2-fold split and the bootstrap (1,000 resamples, seed 42) use these documents, so a page's rows always stay together and the 49 shared pages are never counted twice.
+- Page IDs in the input are `page_NNNN` (TextCtrl) and `imgNN` (AnyText, DiffSTE); both are anonymous.
