@@ -1,0 +1,7 @@
+comparison,detector,size,people_mean_auc_minus_detector_auc,ci_low,ci_high,clear
+edited_vs_authentic,adcd,shrink512,0.278125,0.211515,0.346625,True
+edited_vs_authentic,adcd,full,0.197552,0.135475,0.259688,True
+ai_vs_authentic,adcd,shrink512,0.458247,0.393068,0.523939,True
+ai_vs_authentic,adcd,full,0.335990,0.268588,0.406938,True
+handcrafted_vs_authentic,adcd,shrink512,0.098003,0.014050,0.184521,True
+handcrafted_vs_authentic,adcd,full,0.059115,-0.015123,0.133737,False

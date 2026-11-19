@@ -1,0 +1,16 @@
+comparison,scorer,source,detector,size,auc,ci_low,ci_high,n_edited,n_authentic,small_n
+edited_vs_authentic,people_mean,people,,,0.748368,0.707829,0.787272,320,180,False
+edited_vs_authentic,people_abby,people,,,0.676988,0.647809,0.710065,320,180,False
+edited_vs_authentic,people_nazhan,people,,,0.729774,0.688530,0.768142,320,180,False
+edited_vs_authentic,adcd_shrink512,detector,adcd,shrink512,0.470243,0.419525,0.522707,320,180,False
+edited_vs_authentic,adcd_full,detector,adcd,full,0.550816,0.498555,0.601572,320,180,False
+ai_vs_authentic,people_mean,people,,,0.930017,0.900383,0.957915,160,180,False
+ai_vs_authentic,people_abby,people,,,0.803194,0.761741,0.844115,160,180,False
+ai_vs_authentic,people_nazhan,people,,,0.904757,0.870462,0.937072,160,180,False
+ai_vs_authentic,adcd_shrink512,detector,adcd,shrink512,0.471771,0.411201,0.533717,160,180,False
+ai_vs_authentic,adcd_full,detector,adcd,full,0.594028,0.532200,0.654062,160,180,False
+handcrafted_vs_authentic,people_mean,people,,,0.566719,0.511108,0.621688,160,180,False
+handcrafted_vs_authentic,people_abby,people,,,0.550781,0.517615,0.584243,160,180,False
+handcrafted_vs_authentic,people_nazhan,people,,,0.554792,0.498936,0.610385,160,180,False
+handcrafted_vs_authentic,adcd_shrink512,detector,adcd,shrink512,0.468715,0.403728,0.530262,160,180,False
+handcrafted_vs_authentic,adcd_full,detector,adcd,full,0.507604,0.443527,0.565943,160,180,False

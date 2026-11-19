@@ -1,0 +1,7 @@
+rater,edited_pages,edit_found_rate,ci_low,ci_high,n_flagged,n_edit_found,small_n
+abby,edited,0.954955,0.912621,0.990826,111,106,False
+abby,ai,1.000000,1.000000,1.000000,95,95,False
+abby,handcrafted,0.687500,0.437500,0.909280,16,11,True
+nazhan,edited,0.860465,0.809504,0.905671,172,148,False
+nazhan,ai,0.977778,0.951220,1.000000,135,132,False
+nazhan,handcrafted,0.432432,0.277778,0.585475,37,16,False
