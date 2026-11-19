@@ -1,0 +1,25 @@
+# Package versions of the DTD GPU image (T14). The Modal job installs these itself
+# (detectors/dtd/modal_job.py); this file is the record. Python 3.10 (Modal image).
+#
+# Source: the authors' models/requirements.txt (qcf-568/DocTamper, commit
+# 2d53389932f72941575adbb595377955d366881c). Where the documented version does not
+# install on Python 3.10 the closest working version is used and marked "was".
+# The versions really installed are logged in run_info.json at run time.
+torch==1.11.0+cu113
+torchvision==0.12.0+cu113
+numpy==1.23.5            # was 1.20.1 (no Python 3.10 wheel)
+opencv-python-headless==4.5.5.62
+Pillow==9.5.0
+albumentations==1.3.0
+scipy==1.9.1
+timm==0.4.12
+segmentation_models_pytorch==0.2.1   # installed with --no-deps: it pins efficientnet-pytorch 0.6.3, DTD documents 0.7.1
+efficientnet_pytorch==0.7.1
+jpegio==0.2.8            # built from source (needs libjpeg-dev, build-essential, cython)
+lmdb                     # imported by the authors' dtd.py, not used; not pinned (documented 1.2.1 may not build)
+six==1.15.0
+tqdm==4.64.0
+# Imported by smp 0.2.1 (not documented by the authors; not pinned): pretrainedmodels, munch
+#
+# Not installed (listed by the authors but not imported by the inference code):
+# imageio, matplotlib, mmcv, mmcv_full, mmsegmentation, opencv_contrib_python, pytorch_lightning, yacs
