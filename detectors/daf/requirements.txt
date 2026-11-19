@@ -1,0 +1,31 @@
+# Package versions of the DAF GPU image (T15). The Modal job installs these itself
+# (detectors/daf/modal_job.py); this file is the record. DAF runs in a separate Python 3.9
+# environment (/opt/daf_env) inside a Python 3.12 Modal image.
+#
+# Source: the authors' requirements.txt (github.com/qcf-568/OSTF, commit
+# 1fec955ccd85445f4fc231b0b36cf7844a17a46f) and the team's Week 7 DAF notebook. Where the
+# documented version does not install, the closest working one is used and marked "was".
+# The versions really installed are logged in run_info.json at run time.
+torch==1.13.0            # PyPI Linux build, bundles CUDA 11.7
+torchvision==0.14.0
+numpy==1.22.4            # was 1.21 (numba 0.58.1 needs numpy>=1.22)
+setuptools<70            # mmengine imports pkg_resources; a uv environment starts without it
+yapf==0.40.1             # newer yapf breaks mmengine 0.8.5
+opencv-python==4.8.0.76
+opencv-python-headless==4.8.0.76
+mmengine==0.8.5
+mmcv==2.0.0              # prebuilt CUDA 11.7 / torch 1.13 wheel; falls back to 2.0.1 if 2.0.0 is not available
+timm==0.6.13
+Pillow==9.0.1
+scipy==1.7.3
+scikit-image==0.19.2
+Shapely==2.0.6
+pycocotools==2.0.7
+terminaltables==3.1.10
+six==1.16.0
+rich==13.8.1
+matplotlib==3.5.1
+tqdm==4.64.0
+numba==0.58.1
+albumentations==1.3.1
+# natten==0.17.1 is tried but optional: only the NAT backbone needs it, and the Faster R-CNN Swin configs never import it.
