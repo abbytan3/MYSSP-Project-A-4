@@ -40,6 +40,9 @@ TEST_RESCALE = (1024, 1536)
 MAX_PER_IMG = 1000
 # Tell the parent to save the Volume after this many pages.
 COMMIT_EVERY = 25
+# Put the authors' repo on the import path before anything else: it holds mmdet (the unpacked
+# mmdet_test.zip) and suploss.py. Every mode needs it, including package_versions().
+sys.path.insert(0, REPO)
 # Folder of this file: tiling.py and output_format.py are copied next to it in the image.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import output_format as of  # noqa: E402
@@ -91,8 +94,7 @@ def load_model(weight):
     The caller decides what to do with non-zero counts.
     """
     import torch
-    # The repo root holds suploss.py, which mmdet imports.
-    sys.path.insert(0, REPO)
+    # (The repo root, which holds mmdet and suploss.py, is already on the path: see the top of this file.)
     from mmengine.config import Config
     from mmengine.registry import init_default_scope
     from mmdet.registry import MODELS
