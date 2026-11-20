@@ -41,6 +41,10 @@ If this file and another file disagree, stop and ask.
 | `results/<detector>/` | Score tables and figures from that detector's runs | Whoever ran the run |
 | `results/combined/` | Cross-detector tables and figures | Abby |
 | `docs/` | Setup guide, plan, decisions log, write-up notes | Anyone |
+| `prior_work/abby/` | Abby's Weeks 4–7 code (as run) | Abby |
+| `prior_work/alycia/` | Alycia's Week 7 code (as run) | Alycia |
+| `prior_work/nazhan/` | Nazhan's Week 7 code (as run) | Nazhan |
+| `analysis/dtd/` | DTD extra analysis (top-score spread) | Alycia |
 | `.superset/`, `.githooks/`, `scripts/`, `.claude/`, `.gitignore`, this file | Repo setup and rules | Abby, after telling the team |
 
 - Change files only in folders your person owns. If a task seems to need a change elsewhere, stop and tell the person what change is needed and who owns it.
