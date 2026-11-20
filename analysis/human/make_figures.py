@@ -26,8 +26,8 @@ INK, MUTED, GRID = "#222222", "#666666", "#dddddd"
 # One style per scorer: marker shape, filled or hollow, colour. People are filled, detectors hollow.
 PEOPLE_STYLE = {"people_mean": ("o", True, "#1b1b1b"), "people_abby": ("s", True, "#6b6b6b"),
                 "people_nazhan": ("D", True, "#9a9a9a")}
-DETECTOR_MARKERS = ["^", "v", "P", "X", "*", "h"]
-DETECTOR_COLOURS = ["#0b5cad", "#c05a00", "#2a7f3f", "#8a2c8a", "#a08000", "#007a7a"]
+DETECTOR_MARKERS = ["^", "v", "P", "X", "*", "h", "<", ">"]
+DETECTOR_COLOURS = ["#0b5cad", "#c05a00", "#2a7f3f", "#8a2c8a", "#a08000", "#007a7a", "#b3203c", "#5a5a00"]
 # Plain-words labels for the legend and rows.
 COMPARISON_LABEL = {"edited_vs_authentic": "All edited vs authentic", "ai_vs_authentic": "AI-edited vs authentic",
                     "handcrafted_vs_authentic": "Handcrafted vs authentic"}
@@ -113,7 +113,7 @@ def figure_by_people(path):
     det_styles = detector_styles({f"{d}_{s}" for d, s in keys})
     scopes = [("edited", "All edited"), ("ai", "AI-edited"), ("handcrafted", "Handcrafted")]
     verdicts = ["people_flagged", "in_between", "people_missed"]
-    fig, ax = plt.subplots(figsize=(8.2, 5.6))
+    fig, ax = plt.subplots(figsize=(8.2, 7.6))
     y, ticks, labels = 0.0, [], []
     for scope, scope_label in scopes:
         for verdict in verdicts:
@@ -140,9 +140,10 @@ def figure_by_people(path):
     handles, names = ax.get_legend_handles_labels()
     handles.append(Line2D([0], [0], color=MUTED, linestyle=":", linewidth=1.4))
     names.append("dotted = fewer than 30 edited pages")
-    ax.legend(handles, names, loc="upper left", fontsize=8, frameon=False, labelcolor=INK)
+    # Legend sits below the plot so it never covers a point.
+    ax.legend(handles, names, loc="upper center", bbox_to_anchor=(0.4, -0.1), ncol=3, fontsize=8, frameon=False, labelcolor=INK)
     fig.tight_layout()
-    fig.savefig(path, dpi=300)
+    fig.savefig(path, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 

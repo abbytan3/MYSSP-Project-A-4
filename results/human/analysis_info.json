@@ -1,7 +1,13 @@
 {
   "detectors": [
     "adcd/full",
-    "adcd/shrink512"
+    "adcd/shrink512",
+    "daf_anytext/full",
+    "daf_anytext/shrink512",
+    "daf_diffste/full",
+    "daf_diffste/shrink512",
+    "dtd/full",
+    "dtd/shrink512"
   ],
   "direction": "people edited-ness = 6 - score; detector top score unchanged",
   "documents": 500,
@@ -39,6 +45,66 @@
       "largest_difference": 4.7096304167659753e-07,
       "metrics_compared": 12,
       "recall_B": 0.9980119284294234
+    },
+    "daf_anytext/full": {
+      "cutoffs": [
+        0.2868516445159912,
+        0.08728452771902084
+      ],
+      "false_alarm_B": 0.9906832298136646,
+      "largest_difference": 4.782608694631207e-07,
+      "metrics_compared": 12,
+      "recall_B": 0.9870775347912525
+    },
+    "daf_anytext/shrink512": {
+      "cutoffs": [
+        0.5797877311706543,
+        0.47729185223579407
+      ],
+      "false_alarm_B": 0.9953416149068323,
+      "largest_difference": 4.5584875840720684e-07,
+      "metrics_compared": 12,
+      "recall_B": 0.9970178926441352
+    },
+    "daf_diffste/full": {
+      "cutoffs": [
+        0.3311467468738556,
+        0.2639218270778656
+      ],
+      "false_alarm_B": 1.0,
+      "largest_difference": 4.1720036592085563e-07,
+      "metrics_compared": 12,
+      "recall_B": 0.9980119284294234
+    },
+    "daf_diffste/shrink512": {
+      "cutoffs": [
+        0.30496227741241455,
+        0.3100062310695648
+      ],
+      "false_alarm_B": 1.0,
+      "largest_difference": 4.6520874752431496e-07,
+      "metrics_compared": 12,
+      "recall_B": 0.9990059642147118
+    },
+    "dtd/full": {
+      "cutoffs": [
+        0.14033624529838562,
+        0.12721827626228333
+      ],
+      "false_alarm_B": 0.9968944099378882,
+      "largest_difference": 4.939978380837096e-07,
+      "metrics_compared": 12,
+      "recall_B": 0.9980119284294234
+    },
+    "dtd/shrink512": {
+      "cutoffs": [
+        0.9081681966781616,
+        0.907293975353241
+      ],
+      "false_alarm_B": 0.9953416149068323,
+      "largest_difference": 3.850931676874225e-07,
+      "metrics_compared": 12,
+      "recall_B": 0.9920477137176938
     }
   },
   "seed": 42,
