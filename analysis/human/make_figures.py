@@ -125,7 +125,7 @@ def figure_by_people(path):
                            det_styles[f"{det}_{size}"], f"{det} {size}" if (scope, verdict) == ("edited", verdicts[0]) else None,
                            small=small)
             ticks.append(y)
-            labels.append(f"{scope_label}, {VERDICT_LABEL[verdict]}\n(n = {r['n_edited']}{', under 30' if small else ''})")
+            labels.append(f"{scope_label}, {VERDICT_LABEL[verdict]}\n(n = {r['n_edited']}{', shaky' if small else ''})")
             y += 1.0
         y += 0.5
     ax.axvline(0.5, color=MUTED, linewidth=1, linestyle="--")
@@ -139,7 +139,7 @@ def figure_by_people(path):
     # Legend: the detector sizes plus a proxy line explaining the dotted ranges.
     handles, names = ax.get_legend_handles_labels()
     handles.append(Line2D([0], [0], color=MUTED, linestyle=":", linewidth=1.4))
-    names.append("dotted = fewer than 30 edited pages")
+    names.append("dotted = fewer than 30 edited pages (shaky, do not interpret)")
     # Legend sits below the plot so it never covers a point.
     ax.legend(handles, names, loc="upper center", bbox_to_anchor=(0.4, -0.1), ncol=3, fontsize=8, frameon=False, labelcolor=INK)
     fig.tight_layout()

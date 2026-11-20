@@ -18,7 +18,7 @@ Needs numpy, scipy (see `shared/requirements.txt`) and matplotlib for the charts
 
 ## Tables in `results/human/` (numbers only, no page IDs)
 
-Every number has its 95% range (1,000 bootstrap resamples of documents, seed 42) and its n. `small_n = True` means fewer than 30 pages, so the range is shaky.
+Every number has its 95% range (1,000 bootstrap resamples of documents, seed 42) and its n. `small_n = True` means fewer than 30 pages, so the range is shaky. In `detector_auc_by_people.csv` the "people missed" rows for AI edits rest on only 10 pages (both raters gave a 5): they are shaky, suggest nothing firm and should not be interpreted, even where an AUC looks high.
 
 | File | What it holds |
 |---|---|
