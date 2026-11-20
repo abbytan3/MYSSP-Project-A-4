@@ -1,0 +1,133 @@
+{
+  "detector": "daf_diffste",
+  "documents": 644,
+  "flag_threshold": 0.5,
+  "n_bootstrap": 1000,
+  "pages_in_sample": 1650,
+  "pages_missing": {
+    "full": {
+      "count": 0,
+      "page_ids": []
+    },
+    "shrink512": {
+      "count": 0,
+      "page_ids": []
+    }
+  },
+  "rule_b_cutoffs_by_fold": {
+    "full": [
+      0.3311467468738556,
+      0.2639218270778656
+    ],
+    "shrink512": [
+      0.30496227741241455,
+      0.3100062310695648
+    ]
+  },
+  "run_info": {
+    "full": {
+      "config": "configs/fasterrcnn_xdiffste.py",
+      "detector": "daf_diffste",
+      "gpu": "Tesla T4",
+      "last_call_boxes_total": 145924,
+      "last_call_pages_without_boxes": 0,
+      "last_call_started_utc": "2026-11-20T01:27:02+00:00",
+      "limit_used_in_last_call": 0,
+      "max_per_img": 1000,
+      "mean_seconds_per_page": 1.182,
+      "model_load": {
+        "missing_keys": 0,
+        "unexpected_keys": 0
+      },
+      "notes": "Input as in the authors' README and config: page read as BGR, resized by DAF to fit 1024x1536 keeping the shape, max_per_img=1000. full = 1536 (long side) x 1024 (short side) pieces from (0,0), no overlap, white padding right/bottom, boxes moved to page pixels and clipped to the page. shrink512 = long side 512 (cv2 INTER_AREA), boxes scaled back to the page. A box that crosses a piece border is split in two.",
+      "pages_not_ok": 0,
+      "pages_ok": 1650,
+      "repo_commit": "1fec955ccd85445f4fc231b0b36cf7844a17a46f",
+      "repo_url": "https://github.com/qcf-568/OSTF",
+      "seconds_per_page": 1.416,
+      "seed": 42,
+      "shrink_longest_side": null,
+      "size": "full",
+      "test_rescale": [
+        1024,
+        1536
+      ],
+      "threshold_for_flagging": 0.5,
+      "tile_size": [
+        1536,
+        1024
+      ],
+      "value_scale": "softmax probability of tampered (column 1) per box, float32; box filled with its score, maximum where boxes overlap, 0 elsewhere",
+      "versions": {
+        "Pillow": "9.0.1",
+        "mmcv": "2.0.0",
+        "mmdet": "3.0.0",
+        "mmengine": "0.8.5",
+        "numba": "0.58.1",
+        "numpy": "1.22.4",
+        "opencv-python": "4.8.0.76",
+        "opencv-python-headless": "4.8.0.76",
+        "python": "3.9.21",
+        "scipy": "1.7.3",
+        "timm": "0.6.13",
+        "torch": "1.13.0",
+        "torch_cuda": "11.7",
+        "torchvision": "0.14.0"
+      },
+      "weights": "diffste.pth"
+    },
+    "shrink512": {
+      "config": "configs/fasterrcnn_xdiffste.py",
+      "detector": "daf_diffste",
+      "gpu": "Tesla T4",
+      "last_call_boxes_total": 118826,
+      "last_call_pages_without_boxes": 0,
+      "last_call_started_utc": "2026-11-20T01:09:30+00:00",
+      "limit_used_in_last_call": 0,
+      "max_per_img": 1000,
+      "mean_seconds_per_page": 0.342,
+      "model_load": {
+        "missing_keys": 0,
+        "unexpected_keys": 0
+      },
+      "notes": "Input as in the authors' README and config: page read as BGR, resized by DAF to fit 1024x1536 keeping the shape, max_per_img=1000. full = 1536 (long side) x 1024 (short side) pieces from (0,0), no overlap, white padding right/bottom, boxes moved to page pixels and clipped to the page. shrink512 = long side 512 (cv2 INTER_AREA), boxes scaled back to the page. A box that crosses a piece border is split in two.",
+      "pages_not_ok": 0,
+      "pages_ok": 1650,
+      "repo_commit": "1fec955ccd85445f4fc231b0b36cf7844a17a46f",
+      "repo_url": "https://github.com/qcf-568/OSTF",
+      "seconds_per_page": 0.342,
+      "seed": 42,
+      "shrink_longest_side": 512,
+      "size": "shrink512",
+      "test_rescale": [
+        1024,
+        1536
+      ],
+      "threshold_for_flagging": 0.5,
+      "tile_size": null,
+      "value_scale": "softmax probability of tampered (column 1) per box, float32; box filled with its score, maximum where boxes overlap, 0 elsewhere",
+      "versions": {
+        "Pillow": "9.0.1",
+        "mmcv": "2.0.0",
+        "mmdet": "3.0.0",
+        "mmengine": "0.8.5",
+        "numba": "0.58.1",
+        "numpy": "1.22.4",
+        "opencv-python": "4.8.0.76",
+        "opencv-python-headless": "4.8.0.76",
+        "python": "3.9.21",
+        "scipy": "1.7.3",
+        "timm": "0.6.13",
+        "torch": "1.13.0",
+        "torch_cuda": "11.7",
+        "torchvision": "0.14.0"
+      },
+      "weights": "diffste.pth"
+    }
+  },
+  "seed": 42,
+  "sizes_scored": [
+    "shrink512",
+    "full"
+  ]
+}
