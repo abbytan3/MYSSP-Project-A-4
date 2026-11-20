@@ -8,6 +8,9 @@ Run (the private folder holds `sample.csv` and `outputs/<detector>/<size>/<page_
 
     python -I analysis/dtd/top_score_spread.py --private-dir <private folder>
     python -I analysis/dtd/top_score_spread.py --private-dir <private folder> --limit 3   (test mode)
+    python -I analysis/dtd/top_score_spread.py --private-dir <private folder> --out-csv results/dtd/top_score_spread.csv
+
+With --out-csv it also writes a numbers-only table (size, side, source, n, min, q1, median, q3, max).
 """
 
 import argparse
@@ -38,7 +41,15 @@ def main():
     parser.add_argument("--private-dir", required=True, type=Path, help="private folder with sample.csv and outputs/")
     parser.add_argument("--detector", default="dtd", help="folder name under outputs/ (default: dtd)")
     parser.add_argument("--limit", type=int, default=0, help="test mode: only the first N pages (0 = all)")
+    parser.add_argument("--out-csv", type=Path, default=None, help="optional: write the numbers-only table here")
     args = parser.parse_args()
+    # Rows for the optional CSV: size, side, source (all pages, png or jpg), n and the five summary numbers.
+    table = []
+
+    def add_row(size, label, source, values):
+        a = np.asarray(values, dtype=np.float32)
+        q1, med, q3 = np.percentile(a, [25, 50, 75])
+        table.append([size, label, source, len(a)] + ["%.4f" % x for x in (a.min(), q1, med, q3, a.max())])
 
     # Page list with group and file format (UTF-8, as the repo rules say).
     with open(args.private_dir / "sample.csv", encoding="utf-8", newline="") as handle:
@@ -58,7 +69,9 @@ def main():
 
         # Distribution of the top score, edited pages against untouched pages.
         for label in ("edited", "untouched"):
-            print(" ", label, quartiles([tops[p] for p in page_ids if side(meta[p]) == label]))
+            values = [tops[p] for p in page_ids if side(meta[p]) == label]
+            print(" ", label, quartiles(values))
+            add_row(size, label, "all", values)
 
         # How many pages sit at the single highest value, and how many different values there are.
         every = np.array(list(tops.values()), dtype=np.float32)
@@ -79,6 +92,16 @@ def main():
                 v = [tops[p] for p in page_ids if meta[p]["ext"] == ext and side(meta[p]) == label]
                 if v:
                     print("  format %-4s %-9s %s" % (ext, label, quartiles(v)))
+                    add_row(size, label, ext, v)
+
+    # Write the numbers-only table (UTF-8; no page IDs, only sizes, sides, sources and numbers).
+    if args.out_csv:
+        args.out_csv.parent.mkdir(parents=True, exist_ok=True)
+        with open(args.out_csv, "w", encoding="utf-8", newline="") as handle:
+            writer = csv.writer(handle)
+            writer.writerow(["size", "side", "source", "n", "min", "q1", "median", "q3", "max"])
+            writer.writerows(table)
+        print("\nwrote", len(table), "rows to", args.out_csv)
 
 
 if __name__ == "__main__":

@@ -85,7 +85,7 @@ At shrink512 every detector's AUC is between 0.503 and 0.512. Only the two DAF w
 
 ## Score ceiling (DTD top scores)
 
-**Note on source:** these numbers come from running `analysis/dtd/top_score_spread.py` on the private `.npz` outputs (each page's `top` value) and the group and format columns of `sample.csv`. They are not stored in a results file in this repo. Numbers only, no page IDs.
+**Note on source:** the two tables below (top score by side, and by stored file format) are in `results/dtd/top_score_spread.csv` (columns size, side, source, n, min, q1, median, q3, max). It is written by `analysis/dtd/top_score_spread.py`, which reads the private `.npz` outputs (each page's `top` value) and the group and format columns of `sample.csv`. The bullet counts (distinct values, pages at the maximum, pages at or above 0.90, between 0.5 and 0.90 and below 0.5, most common value) are printed by the same script and are not in the CSV. Numbers only, no page IDs.
 
 Top score per page, 1,006 edited and 644 untouched pages:
 
