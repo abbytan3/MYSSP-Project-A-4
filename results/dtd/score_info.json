@@ -1,0 +1,122 @@
+{
+  "detector": "dtd",
+  "documents": 644,
+  "flag_threshold": 0.5,
+  "n_bootstrap": 1000,
+  "pages_in_sample": 1650,
+  "pages_missing": {
+    "full": {
+      "count": 0,
+      "page_ids": []
+    },
+    "shrink512": {
+      "count": 0,
+      "page_ids": []
+    }
+  },
+  "rule_b_cutoffs_by_fold": {
+    "full": [
+      0.14033624529838562,
+      0.12721827626228333
+    ],
+    "shrink512": [
+      0.9081681966781616,
+      0.907293975353241
+    ]
+  },
+  "run_info": {
+    "full": {
+      "detector": "dtd",
+      "gpu": "Tesla T4",
+      "last_call_jpeg_pages_resaved_because_table_value_above_63": 0,
+      "last_call_pages_jpeg_used_as_is": 0,
+      "last_call_pages_resaved_as_jpeg_q100": 0,
+      "last_call_started_utc": "2026-11-20T02:50:57+00:00",
+      "limit_used_in_last_call": 0,
+      "mean_seconds_per_page": 0.857,
+      "model_load": {
+        "missing_keys": 0,
+        "unexpected_keys": 0
+      },
+      "notes": "Input as in the authors' evaluation: greyscale page turned into RGB, luma DCT numbers clipped to 0..20, 8x8 quantisation table. PNG pages are re-saved as JPEG quality 100 just before reading (after padding for full); JPEG pages keep their own DCT numbers and table unless the table has a value above 63 (then they are re-saved too, PLAN CHANGE); shrink512 pages are always re-saved. full = 512x512 tiles from (0,0), no overlap, white padding right/bottom, joined back, padding cropped. shrink512 = longest side 512 (cv2 INTER_AREA), padded white to 512x512, map resized back with bilinear interpolation.",
+      "pages_not_ok": 0,
+      "pages_ok": 1650,
+      "repo_commit": "2d53389932f72941575adbb595377955d366881c",
+      "repo_url": "https://github.com/qcf-568/DocTamper",
+      "seconds_per_page": 0.892,
+      "seed": 42,
+      "shrink_longest_side": null,
+      "size": "full",
+      "threshold_for_flagging": 0.5,
+      "tile_size": 512,
+      "value_scale": "softmax probability of tampered, float32 (not rounded to 8 bit)",
+      "versions": {
+        "Pillow": "9.5.0",
+        "albumentations": "1.3.0",
+        "efficientnet_pytorch": "0.7.1",
+        "jpegio": "0.2.8",
+        "numpy": "1.23.5",
+        "opencv-python-headless": "4.5.5.62",
+        "scipy": "1.9.1",
+        "segmentation_models_pytorch": "0.2.1",
+        "timm": "0.4.12",
+        "torch": "1.11.0+cu113",
+        "torchvision": "0.12.0+cu113"
+      },
+      "weights": [
+        "dtd_doctamper.pth",
+        "vph_imagenet.pt",
+        "swin_imagenet.pt"
+      ]
+    },
+    "shrink512": {
+      "detector": "dtd",
+      "gpu": "Tesla T4",
+      "last_call_jpeg_pages_resaved_because_table_value_above_63": 0,
+      "last_call_pages_jpeg_used_as_is": 0,
+      "last_call_pages_resaved_as_jpeg_q100": 0,
+      "last_call_started_utc": "2026-11-20T02:50:15+00:00",
+      "limit_used_in_last_call": 0,
+      "mean_seconds_per_page": 0.198,
+      "model_load": {
+        "missing_keys": 0,
+        "unexpected_keys": 0
+      },
+      "notes": "Input as in the authors' evaluation: greyscale page turned into RGB, luma DCT numbers clipped to 0..20, 8x8 quantisation table. PNG pages are re-saved as JPEG quality 100 just before reading (after padding for full); JPEG pages keep their own DCT numbers and table unless the table has a value above 63 (then they are re-saved too, PLAN CHANGE); shrink512 pages are always re-saved. full = 512x512 tiles from (0,0), no overlap, white padding right/bottom, joined back, padding cropped. shrink512 = longest side 512 (cv2 INTER_AREA), padded white to 512x512, map resized back with bilinear interpolation.",
+      "pages_not_ok": 0,
+      "pages_ok": 1650,
+      "repo_commit": "2d53389932f72941575adbb595377955d366881c",
+      "repo_url": "https://github.com/qcf-568/DocTamper",
+      "seconds_per_page": 0.188,
+      "seed": 42,
+      "shrink_longest_side": 512,
+      "size": "shrink512",
+      "threshold_for_flagging": 0.5,
+      "tile_size": null,
+      "value_scale": "softmax probability of tampered, float32 (not rounded to 8 bit)",
+      "versions": {
+        "Pillow": "9.5.0",
+        "albumentations": "1.3.0",
+        "efficientnet_pytorch": "0.7.1",
+        "jpegio": "0.2.8",
+        "numpy": "1.23.5",
+        "opencv-python-headless": "4.5.5.62",
+        "scipy": "1.9.1",
+        "segmentation_models_pytorch": "0.2.1",
+        "timm": "0.4.12",
+        "torch": "1.11.0+cu113",
+        "torchvision": "0.12.0+cu113"
+      },
+      "weights": [
+        "dtd_doctamper.pth",
+        "vph_imagenet.pt",
+        "swin_imagenet.pt"
+      ]
+    }
+  },
+  "seed": 42,
+  "sizes_scored": [
+    "shrink512",
+    "full"
+  ]
+}
