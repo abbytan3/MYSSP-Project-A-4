@@ -1,0 +1,58 @@
+row_type,comparison,scorer,source,detector,size,measure,estimate,ci_low,ci_high,range_excludes_0_per_file,n_edited_group,n_authentic,small_n_per_file
+auc,edited_vs_authentic,people_mean,people,,,auc,0.748368,0.707829,0.787272,,320,180,False
+auc,edited_vs_authentic,people_abby,people,,,auc,0.676988,0.647809,0.710065,,320,180,False
+auc,edited_vs_authentic,people_nazhan,people,,,auc,0.729774,0.688530,0.768142,,320,180,False
+auc,edited_vs_authentic,adcd_shrink512,detector,adcd,shrink512,auc,0.470243,0.419525,0.522707,,320,180,False
+auc,edited_vs_authentic,adcd_full,detector,adcd,full,auc,0.550816,0.498555,0.601572,,320,180,False
+auc,edited_vs_authentic,dtd_shrink512,detector,dtd,shrink512,auc,0.515226,0.459774,0.571106,,320,180,False
+auc,edited_vs_authentic,dtd_full,detector,dtd,full,auc,0.515738,0.461122,0.570090,,320,180,False
+auc,edited_vs_authentic,daf_anytext_shrink512,detector,daf_anytext,shrink512,auc,0.506441,0.455741,0.568777,,320,180,False
+auc,edited_vs_authentic,daf_anytext_full,detector,daf_anytext,full,auc,0.590781,0.539784,0.635408,,320,180,False
+auc,edited_vs_authentic,daf_diffste_shrink512,detector,daf_diffste,shrink512,auc,0.507639,0.457109,0.560582,,320,180,False
+auc,edited_vs_authentic,daf_diffste_full,detector,daf_diffste,full,auc,0.607760,0.558077,0.656981,,320,180,False
+auc,ai_vs_authentic,people_mean,people,,,auc,0.930017,0.900383,0.957915,,160,180,False
+auc,ai_vs_authentic,people_abby,people,,,auc,0.803194,0.761741,0.844115,,160,180,False
+auc,ai_vs_authentic,people_nazhan,people,,,auc,0.904757,0.870462,0.937072,,160,180,False
+auc,ai_vs_authentic,adcd_shrink512,detector,adcd,shrink512,auc,0.471771,0.411201,0.533717,,160,180,False
+auc,ai_vs_authentic,adcd_full,detector,adcd,full,auc,0.594028,0.532200,0.654062,,160,180,False
+auc,ai_vs_authentic,dtd_shrink512,detector,dtd,shrink512,auc,0.532743,0.470892,0.595720,,160,180,False
+auc,ai_vs_authentic,dtd_full,detector,dtd,full,auc,0.550295,0.486737,0.610704,,160,180,False
+auc,ai_vs_authentic,daf_anytext_shrink512,detector,daf_anytext,shrink512,auc,0.511389,0.450032,0.576079,,160,180,False
+auc,ai_vs_authentic,daf_anytext_full,detector,daf_anytext,full,auc,0.721771,0.665987,0.772211,,160,180,False
+auc,ai_vs_authentic,daf_diffste_shrink512,detector,daf_diffste,shrink512,auc,0.525000,0.465656,0.584174,,160,180,False
+auc,ai_vs_authentic,daf_diffste_full,detector,daf_diffste,full,auc,0.717569,0.661180,0.766117,,160,180,False
+auc,handcrafted_vs_authentic,people_mean,people,,,auc,0.566719,0.511108,0.621688,,160,180,False
+auc,handcrafted_vs_authentic,people_abby,people,,,auc,0.550781,0.517615,0.584243,,160,180,False
+auc,handcrafted_vs_authentic,people_nazhan,people,,,auc,0.554792,0.498936,0.610385,,160,180,False
+auc,handcrafted_vs_authentic,adcd_shrink512,detector,adcd,shrink512,auc,0.468715,0.403728,0.530262,,160,180,False
+auc,handcrafted_vs_authentic,adcd_full,detector,adcd,full,auc,0.507604,0.443527,0.565943,,160,180,False
+auc,handcrafted_vs_authentic,dtd_shrink512,detector,dtd,shrink512,auc,0.497708,0.432647,0.557277,,160,180,False
+auc,handcrafted_vs_authentic,dtd_full,detector,dtd,full,auc,0.481181,0.419633,0.549164,,160,180,False
+auc,handcrafted_vs_authentic,daf_anytext_shrink512,detector,daf_anytext,shrink512,auc,0.501493,0.440946,0.567246,,160,180,False
+auc,handcrafted_vs_authentic,daf_anytext_full,detector,daf_anytext,full,auc,0.459792,0.398372,0.514892,,160,180,False
+auc,handcrafted_vs_authentic,daf_diffste_shrink512,detector,daf_diffste,shrink512,auc,0.490278,0.428998,0.553374,,160,180,False
+auc,handcrafted_vs_authentic,daf_diffste_full,detector,daf_diffste,full,auc,0.497951,0.436230,0.560526,,160,180,False
+difference,edited_vs_authentic,people_mean minus detector,detector,adcd,shrink512,people_mean_auc_minus_detector_auc,0.278125,0.211515,0.346625,True,,,
+difference,edited_vs_authentic,people_mean minus detector,detector,adcd,full,people_mean_auc_minus_detector_auc,0.197552,0.135475,0.259688,True,,,
+difference,edited_vs_authentic,people_mean minus detector,detector,dtd,shrink512,people_mean_auc_minus_detector_auc,0.233142,0.167125,0.302494,True,,,
+difference,edited_vs_authentic,people_mean minus detector,detector,dtd,full,people_mean_auc_minus_detector_auc,0.232630,0.167974,0.297819,True,,,
+difference,edited_vs_authentic,people_mean minus detector,detector,daf_anytext,shrink512,people_mean_auc_minus_detector_auc,0.241927,0.171476,0.303860,True,,,
+difference,edited_vs_authentic,people_mean minus detector,detector,daf_anytext,full,people_mean_auc_minus_detector_auc,0.157587,0.099007,0.214461,True,,,
+difference,edited_vs_authentic,people_mean minus detector,detector,daf_diffste,shrink512,people_mean_auc_minus_detector_auc,0.240729,0.178672,0.302910,True,,,
+difference,edited_vs_authentic,people_mean minus detector,detector,daf_diffste,full,people_mean_auc_minus_detector_auc,0.140608,0.080852,0.201504,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,adcd,shrink512,people_mean_auc_minus_detector_auc,0.458247,0.393068,0.523939,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,adcd,full,people_mean_auc_minus_detector_auc,0.335990,0.268588,0.406938,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,dtd,shrink512,people_mean_auc_minus_detector_auc,0.397274,0.332079,0.467250,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,dtd,full,people_mean_auc_minus_detector_auc,0.379722,0.317275,0.447571,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,daf_anytext,shrink512,people_mean_auc_minus_detector_auc,0.418628,0.346903,0.489884,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,daf_anytext,full,people_mean_auc_minus_detector_auc,0.208247,0.146189,0.272541,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,daf_diffste,shrink512,people_mean_auc_minus_detector_auc,0.405017,0.339104,0.467009,True,,,
+difference,ai_vs_authentic,people_mean minus detector,detector,daf_diffste,full,people_mean_auc_minus_detector_auc,0.212448,0.152035,0.280561,True,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,adcd,shrink512,people_mean_auc_minus_detector_auc,0.098003,0.014050,0.184521,True,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,adcd,full,people_mean_auc_minus_detector_auc,0.059115,-0.015123,0.133737,False,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,dtd,shrink512,people_mean_auc_minus_detector_auc,0.069010,-0.010497,0.154443,False,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,dtd,full,people_mean_auc_minus_detector_auc,0.085538,0.001842,0.166680,True,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,daf_anytext,shrink512,people_mean_auc_minus_detector_auc,0.065226,-0.020991,0.144416,False,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,daf_anytext,full,people_mean_auc_minus_detector_auc,0.106927,0.028326,0.185117,True,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,daf_diffste,shrink512,people_mean_auc_minus_detector_auc,0.076441,0.001463,0.152408,True,,,
+difference,handcrafted_vs_authentic,people_mean minus detector,detector,daf_diffste,full,people_mean_auc_minus_detector_auc,0.068767,-0.010699,0.150227,False,,,
