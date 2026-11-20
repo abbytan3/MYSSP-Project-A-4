@@ -129,39 +129,59 @@ def fig_auc(data, out_dir):
     ax.set_ylabel("AUC (area under ROC curve, 0 to 1)")
     ax.set_title("AUC per detector and input size (95% range)", fontsize=11)
     style_axes(ax)
-    ax.legend(fontsize=8, loc="upper left", framealpha=0.95)
+    # Legend sits outside the axes so it never covers a point.
+    ax.legend(fontsize=8, loc="center left", bbox_to_anchor=(1.01, 0.5), framealpha=0.95)
     return save(fig, out_dir, "fig_auc")
 
 
 def fig_rule_b(data, out_dir):
-    """(b) Rule B recall against false-alarm rate, with ranges on both axes."""
+    """(b) Rule B recall against false-alarm rate, with ranges on both axes.
+
+    Left panel: the full 0 to 1 square. Right panel: the same points zoomed to where they sit,
+    because the points can overlap in the full square.
+    """
     detectors, sizes = orders(data)
-    fig, ax = plt.subplots(figsize=(5.6, 5.0))
-    for i, detector in enumerate(detectors):
-        colour = COLOURS[i % len(COLOURS)]
-        for size in sizes:
-            if (detector, size) not in data:
-                continue
-            d = data[(detector, size)]
-            fa, fa_lo, fa_hi = d["false_alarm_B"]
-            rec, rec_lo, rec_hi = d["recall_B"]
-            style = SIZE_STYLE.get(size, SIZE_STYLE["full"])
-            xe, ye = err(fa, fa_lo, fa_hi), err(rec, rec_lo, rec_hi)
-            n = d["n"]
-            ax.errorbar(fa, rec, xerr=[[xe[0]], [xe[1]]], yerr=[[ye[0]], [ye[1]]], fmt=MARKERS[i % len(MARKERS)],
-                        color=colour, markerfacecolor=colour if style["filled"] else "white", markersize=8,
-                        markeredgewidth=1.6, elinewidth=1.4, capsize=3, linestyle="none",
-                        label=f"{detector}, {size} (n = {n[0]:,} / {n[1]:,})")
-    # A detector with no skill lies on this line (recall equals false-alarm rate).
-    ax.plot([0, 1], [0, 1], color="black", linestyle=":", linewidth=1.2, label="no skill (recall = false-alarm rate)")
-    ax.set_xlim(0, 1.02)
-    ax.set_ylim(0, 1.02)
-    ax.set_xlabel("False-alarm rate on untouched pages (rule B, 0 to 1)")
-    ax.set_ylabel("Recall on edited pages (rule B, 0 to 1)")
-    ax.set_title("Rule B: recall against false alarms (95% ranges)", fontsize=11)
-    ax.grid(color="#cccccc", linewidth=0.6)
-    ax.set_axisbelow(True)
-    ax.legend(fontsize=7.5, loc="lower right", framealpha=0.95, title="n = edited / untouched pages", title_fontsize=7.5)
+    fig, (axf, axz) = plt.subplots(1, 2, figsize=(11.5, 5.0))
+    lows, highs = [], []
+    for ax in (axf, axz):
+        for i, detector in enumerate(detectors):
+            colour = COLOURS[i % len(COLOURS)]
+            for size in sizes:
+                if (detector, size) not in data:
+                    continue
+                d = data[(detector, size)]
+                fa, fa_lo, fa_hi = d["false_alarm_B"]
+                rec, rec_lo, rec_hi = d["recall_B"]
+                style = SIZE_STYLE.get(size, SIZE_STYLE["full"])
+                xe, ye = err(fa, fa_lo, fa_hi), err(rec, rec_lo, rec_hi)
+                ax.errorbar(fa, rec, xerr=[[xe[0]], [xe[1]]], yerr=[[ye[0]], [ye[1]]], fmt=MARKERS[i % len(MARKERS)],
+                            color=colour, markerfacecolor=colour if style["filled"] else "white", markersize=8,
+                            markeredgewidth=1.6, elinewidth=1.4, capsize=3, linestyle="none",
+                            label=f"{detector}, {size}")
+                if ax is axz:
+                    lows += [v for v in (fa - xe[0], rec - ye[0]) if not np.isnan(v)]
+                    highs += [v for v in (fa + xe[1], rec + ye[1]) if not np.isnan(v)]
+        # A detector with no skill lies on this line (recall equals false-alarm rate).
+        ax.plot([0, 1], [0, 1], color="black", linestyle=":", linewidth=1.2, label="no skill (recall = false-alarm rate)")
+        ax.set_xlabel("False-alarm rate on untouched pages (rule B, 0 to 1)")
+        ax.set_ylabel("Recall on edited pages (rule B, 0 to 1)")
+        ax.grid(color="#cccccc", linewidth=0.6)
+        ax.set_axisbelow(True)
+    axf.set_xlim(0, 1.02)
+    axf.set_ylim(0, 1.02)
+    axf.set_title("Full range", fontsize=11)
+    # Zoom window: the smallest square around every point and range, plus a margin.
+    lo, hi = min(lows), max(highs)
+    pad = max((hi - lo) * 0.15, 0.005)
+    axz.set_xlim(lo - pad, min(hi + pad, 1.02))
+    axz.set_ylim(lo - pad, min(hi + pad, 1.02))
+    axz.set_title("Zoomed to the points", fontsize=11)
+    handles, labels = axz.get_legend_handles_labels()
+    n = next(iter(data.values()))["n"]
+    axz.legend(handles, labels, fontsize=8, loc="center left", bbox_to_anchor=(1.01, 0.5), framealpha=0.95,
+               title=f"n = {n[0]:,} edited / {n[1]:,} untouched pages", title_fontsize=8)
+    fig.suptitle("Rule B: recall against false alarms (95% ranges)", fontsize=12)
+    fig.tight_layout()
     return save(fig, out_dir, "fig_ruleB_recall_vs_fa")
 
 
@@ -194,12 +214,17 @@ def fig_location(data, out_dir):
             top_count = max(top_count, d["n"][4])
     for ax in (ax1, ax2):
         ax.set_xticks(range(len(detectors)))
-        ax.set_xticklabels([f"{d}\n{n_label(data, d, sizes)}" for d in detectors], fontsize=8)
+        ax.set_xticklabels(detectors, fontsize=9)
         style_axes(ax)
     ax1.set_ylim(0, 1.0)
     ax1.set_ylabel("Location recall: edits found / all edits (0 to 1)")
     ax1.set_title("Edits found (95% range)", fontsize=11)
-    ax1.legend(fontsize=8, loc="upper left", framealpha=0.95)
+    # Legend goes below the left panel so it never covers a bar or a range.
+    ax1.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, framealpha=0.95)
+    # Page counts, once for the whole figure (they are the same for every bar unless flagged).
+    note = "; ".join(sorted({f"{d}: {n_label(data, d, sizes)}" for d in detectors})) \
+        if len({data[k]["n"][:2] for k in data}) > 1 else n_label(data, detectors[0], sizes)
+    fig.text(0.5, -0.02, note, ha="center", fontsize=9)
     ax2.set_yscale("log")
     # Start the log axis at 1 so bar heights are honest; leave room above for the count labels.
     ax2.set_ylim(1, top_count * 4)
@@ -219,7 +244,9 @@ def main():
     detectors, sizes = orders(data)
     print(f"detectors: {detectors}; sizes: {sizes}")
     for path in (fig_auc(data, args.out_dir), fig_rule_b(data, args.out_dir), fig_location(data, args.out_dir)):
-        print("wrote", path.relative_to(REPO) if REPO in path.resolve().parents else path, "(+ .pdf)")
+        # Show the path relative to the repo; resolve first so a relative --out-dir works too.
+        full = path.resolve()
+        print("wrote", full.relative_to(REPO) if REPO in full.parents else path, "(+ .pdf)")
 
 
 if __name__ == "__main__":
