@@ -1,6 +1,6 @@
 # Can Off-the-Shelf Tampering Detectors Find AI Edits in Bank Statements?
 
-**MYSSP 2026, Project A-4** · Abby Tan Yi Pei, Alycia Yeak Yinyi, Muhammad Nazhan bin Zailani · Mentor and co-author: Jia Yu Lim
+**MYSSP 2026, Project A-4** · Abby Tan Yi Pei, Alycia Yeak Yinyi, Muhammad Nazhan bin Zailani, Lim Jia Yu
 
 - **Project page** (write-up, video and Demo Day slides): https://myssp.myresearchguide.org/#/project-archive/project/financial-document-tampering
 
