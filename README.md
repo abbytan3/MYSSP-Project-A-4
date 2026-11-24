@@ -136,17 +136,17 @@ python3 -I detectors/dtd/test_tiling.py
 python3 -I detectors/daf/test_tiling.py
 # rebuild the five cross-detector tables in results/combined/tables/ from results/*/scores.csv and results/human/*.csv
 python3 analysis/combined/make_tables.py
-# redraw the three cross-detector charts (AUC, rule B vs false alarms, location) as PNG and PDF
-python3 analysis/figures/make_figures.py --out-dir results/combined/figures
-# redraw the five ADCD-Net charts in results/adcd/figures/
-python3 analysis/figures/make_figures_t16.py
-# redraw the five DAF charts for each weight
-python3 analysis/figures/make_figures_t18.py --detector daf_anytext --name "DAF (AnyText weight)"
-python3 analysis/figures/make_figures_t18.py --detector daf_diffste --name "DAF (DiffSTE weight)"
-# redraw the two people-vs-detectors charts in results/human/figures/
+# redraw every chart into a scratch folder outside the repo (the committed PNGs are the submitted images; never overwrite them)
+python3 analysis/figures/make_figures.py --out-dir /tmp/a4_check/combined
+python3 analysis/figures/make_figures_t16.py --out-dir /tmp/a4_check/adcd
+python3 analysis/figures/make_figures_t18.py --detector daf_anytext --name "DAF (AnyText weight)" --out-dir /tmp/a4_check/daf_anytext
+python3 analysis/figures/make_figures_t18.py --detector daf_diffste --name "DAF (DiffSTE weight)" --out-dir /tmp/a4_check/daf_diffste
+python3 analysis/figures/make_writeup_figures.py --out-dir /tmp/a4_check/writeup
+# check the write-up figures plot exactly the committed values (no output = identical)
+diff /tmp/a4_check/writeup/figure_data.csv results/writeup/figures/figure_data.csv
+# the people-vs-detectors script always writes into results/human/figures/, so restore the committed PNGs afterwards
 python3 analysis/human/make_figures.py
-# redraw the write-up's Figures 2 to 5 and list every plotted value in results/writeup/figures/figure_data.csv
-python3 analysis/figures/make_writeup_figures.py
+git restore results/human/figures
 ```
 
 `make_tables.py` copies every value as text from the score files (no rounding, no arithmetic) and prints how many cells were missing; it should say 0. Charts are drawn only from the CSV tables.
@@ -254,9 +254,9 @@ python3 shared/score.py --detector <detector> --sample <private>/sample.csv --ou
 ### 6. Combined tables and charts
 
 ```bash
-# cross-detector tables, then the charts (same commands as Level A)
+# cross-detector tables, then the charts (same commands as Level A; charts go to a folder outside the repo)
 python3 analysis/combined/make_tables.py
-python3 analysis/figures/make_figures.py --out-dir results/combined/figures
+python3 analysis/figures/make_figures.py --out-dir /tmp/a4_check/combined
 ```
 
 ### 7. People vs detectors (needs the private rating files)
@@ -266,7 +266,7 @@ python3 analysis/figures/make_figures.py --out-dir results/combined/figures
 python3 analysis/human/join_ratings.py
 # score people vs detectors; at the "Detectors" prompt type: adcd dtd daf_anytext daf_diffste
 python3 analysis/human/people_vs_detectors.py
-# draw the two charts
+# draw the two charts (writes into results/human/figures/; run `git restore results/human/figures` to keep the submitted PNGs)
 python3 analysis/human/make_figures.py
 ```
 
@@ -308,12 +308,28 @@ python3 -I analysis/dtd/top_score_spread.py --private-dir <private>
 
 Scoring all 1,650 pages should give 1,006 edited pages (1,093 edits), 644 untouched pages, 644 documents and 0 missing pages, and the AUC values in [Results at a glance](#results-at-a-glance) (all from `results/combined/tables/detector_table.csv`).
 
-## Write-up figures and checks
+## Where each submitted figure and number comes from
 
-The write-up points to this repo for its figures and for the page-size check. Both are here:
+The write-up and the Demo Day slides were submitted in November 2026. Every chart in them is a matplotlib figure from this repo, drawn from the committed CSV files; none was made with an AI image generator. **The PNG files listed below are the exact images used. Do not redraw or overwrite them**: rerunning a script on another computer gives the same values but slightly different pixels (fonts and matplotlib version).
 
-- **Figures 2 to 5** were drawn with matplotlib by [`analysis/figures/make_writeup_figures.py`](analysis/figures/make_writeup_figures.py) from `results/<detector>/scores.csv` and `results/human/auc.csv`. Its output is in `results/writeup/figures/`: the four PNGs (300 dpi) and `figure_data.csv`, which lists all 67 plotted values with their 95% CIs. Run with matplotlib 3.11.2 and the TeX Gyre Termes font (part of TeX Live), it redraws PNGs byte-identical to the committed ones; without that font the lettering falls back to matplotlib's default serif and the values are unchanged. `--pdf --out-dir <folder outside the repo>` also writes the PDFs used in the paper. Figure 1 (the pipeline) was drawn with TikZ inside the paper's LaTeX source.
-- **The page-size check** (Section 2.3 of the write-up: AUC of tile count alone, edited vs untouched pages) comes from [`analysis/tile_check/tile_count_vs_label.py`](analysis/tile_check/tile_count_vs_label.py). Its printed output, run on the private ADCD-Net full-size outputs, is saved in `results/adcd/tile_check/tile_count_vs_label.txt`, together with `tile_count_vs_top.txt` (top score against tile count). The output's last line cross-checks the overall AUC against `results/adcd/scores.csv`.
+| Deliverable | Figure | File in this repo | Drawn by |
+|---|---|---|---|
+| Write-up | Figure 1, pipeline | none: drawn with TikZ inside the paper's LaTeX source | |
+| Write-up | Figure 2, AUC per detector and input size | `results/writeup/figures/fig2_auc.png` | `analysis/figures/make_writeup_figures.py` |
+| Write-up | Figure 3, rule B recall vs false-alarm rate | `results/writeup/figures/fig3_ruleB.png` | same |
+| Write-up | Figure 4, location recall and false regions | `results/writeup/figures/fig4_location.png` | same |
+| Write-up | Figure 5, people vs detectors | `results/writeup/figures/fig5_people.png` | same |
+| Slides | Figure 1, pipeline (slide 4) | none: text boxes in Canva | |
+| Slides | Figure 2, AUC per detector and input size (slide 6) | `results/combined/figures/fig_auc.png` | `analysis/figures/make_figures.py` |
+| Slides | Figure 3, rule B recall vs false-alarm rate (slide 7) | `results/combined/figures/fig_ruleB_recall_vs_fa.png` | same |
+| Slides | Figure 4, location recall and false regions (slide 8) | `results/combined/figures/fig_location.png` | same |
+| Slides | Figure 5, people vs detectors (slide 9) | `results/human/figures/auc_people_vs_detectors.png` | `analysis/human/make_figures.py` |
+
+- **Write-up figures:** `make_writeup_figures.py` also writes `results/writeup/figures/figure_data.csv`, which lists all 67 plotted values with their 95% CIs. With matplotlib 3.11.2 and the TeX Gyre Termes font (part of TeX Live) it redraws PNGs byte-identical to the committed ones; without that font the lettering falls back to matplotlib's default serif and the values are unchanged. By default it writes to a temporary folder outside the repo (the path is printed); `--pdf` also writes the PDFs used in the paper.
+- **Slide figures:** these are the analysis charts, drawn on 20 Nov 2026. Their labels use the analysis wording: "shrink512" for Downscaled, "95% range(s)" for the 95% CI, and an older label on the dotted AUC = 0.5 line. The values are the same as in the write-up figures.
+- **Page-size check** (write-up Section 2.3: AUC of tile count alone, edited vs untouched pages): printed by [`analysis/tile_check/tile_count_vs_label.py`](analysis/tile_check/tile_count_vs_label.py) from the private ADCD-Net full-size outputs and saved as `results/adcd/tile_check/tile_count_vs_label.txt`, with `tile_count_vs_top.txt` (top score against tile count) next to it. The output's last line cross-checks the overall AUC against `results/adcd/scores.csv`.
+- **Numbers:** every number in the write-up, slides and project page is in `results/<detector>/scores.csv`, `results/<detector>/differences.csv`, `results/human/*.csv`, `results/dtd/top_score_spread.csv`, `results/adcd/tile_check/` or `analysis/ablation/results/ablation_scores.csv`. Test-set counts (slide 5, write-up Table 1) come from `shared/sample.py`. External figures (for example the Entrust forgery statistic and DTD's published F1) are cited in the write-up.
+- **Correction to slide 4:** it says Full uses 512 px tiles. That holds for ADCD-Net and DTD; DAF used 1,536 × 1,024 tiles (see [Terms](#terms-used-in-this-repo)). The write-up states it correctly.
 
 ## Known limits and what cannot be reproduced
 
@@ -321,7 +337,7 @@ The write-up points to this repo for its figures and for the page-size check. Bo
 - **No heat maps are kept.** Each page keeps only its top score and the pixels at 0.5. This is all the scoring needs, but a different threshold or a pixel-level analysis would need the detectors rerun.
 - **The Modal Volume will be deleted after the study** (our mentor's condition for using the programme's shared GPU workspace). The compact outputs are kept privately by the team.
 - **The page-size check reads private outputs.** Its printed results are committed (`results/adcd/tile_check/`), but rerunning it needs the ADCD-Net outputs, which are not shared.
-- **Two sets of charts.** The PNGs under `results/<detector>/figures/`, `results/combined/figures/` and `results/human/figures/` are the analysis versions, with older labels. The write-up's Figures 2 to 5 are the ones in `results/writeup/figures/`.
+- **Two sets of charts.** The slides use the analysis charts in `results/combined/figures/` and `results/human/figures/` (older labels); the write-up uses `results/writeup/figures/`. Both show the same values. The per-detector charts in `results/<detector>/figures/` are analysis charts not used in either.
 - **Our own setup.** Full-size tiling is our own design. DTD reads PNG pages, and JPEG pages with a coarse quantisation table, through a quality-100 JPEG re-save; the re-save counts of the full-size DTD run were overwritten and are not recoverable (`docs/decisions.md`, 20 Nov, T14). DAF gives boxes, which are coarser than heat maps.
 - **Unverified setups.** DTD and DAF were not checked against their published scores; ADCD-Net was checked only in an earlier version of our pipeline (Week 5, `prior_work/abby/week5_adcd/`).
 - **Ablation study.** Its headline contrasts hold for the PNG copies; on the JPEG copies DTD at full size also separates the AI edit (see `analysis/ablation/README.md`). Week 7 numbers that used DAF's SRNet weight cannot be reproduced from the repo.

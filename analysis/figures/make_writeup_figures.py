@@ -13,11 +13,14 @@ Writes: <out-dir>/fig2_auc.png, fig3_ruleB.png, fig4_location.png, fig5_people.p
         PDFs of the four figures too with --pdf (the write-up used the PDFs; PDFs never go in this repo)
 
 Usage, from the repo root:
-  python3 analysis/figures/make_writeup_figures.py                                   # PNGs + figure_data.csv into results/writeup/figures/
-  python3 analysis/figures/make_writeup_figures.py --out-dir <folder outside the repo> --pdf
+  python3 analysis/figures/make_writeup_figures.py                         # PNGs + figure_data.csv into a temporary folder (path printed)
+  python3 analysis/figures/make_writeup_figures.py --out-dir <folder> --pdf  # also the PDFs used in the paper
+The committed files in results/writeup/figures/ are the images submitted in the write-up: never write over them.
 """
 # read the command-line options
 import argparse
+# find the computer's temporary folder, outside the repo
+import tempfile
 # read and write the CSV tables
 import csv
 # an in-memory file for the PDF draw when no PDF is kept
@@ -36,13 +39,15 @@ from matplotlib.patches import Patch
 REPO = Path(__file__).resolve().parents[2]
 # command-line options: where the figures go, and whether to also write PDFs
 parser = argparse.ArgumentParser(description="Draw the write-up's Figures 2-5 from results/.")
-parser.add_argument("--out-dir", type=Path, default=REPO / "results" / "writeup" / "figures")
+# default: a temporary folder outside the repo, so the submitted PNGs in results/writeup/figures/ are never overwritten
+parser.add_argument("--out-dir", type=Path, default=Path(tempfile.gettempdir()) / "a4_writeup_figures")
 parser.add_argument("--pdf", action="store_true", help="also write PDFs (keep them outside the repo)")
 args = parser.parse_args()
 # every input table is read from this repo's results folder
 R = REPO / "results"
 OUT = args.out_dir
 OUT.mkdir(parents=True, exist_ok=True)
+print(f"writing to {OUT}")
 
 # the write-up's font (TeX Gyre Termes, a Times-like font that ships with TeX Live); register it if it is installed
 for f in fm.findSystemFonts(["/usr/share/texmf/fonts/opentype/public/tex-gyre", "/usr/share/texlive/texmf-dist/fonts/opentype/public/tex-gyre", "/Library/TeX/Root/texmf-dist/fonts/opentype/public/tex-gyre"]):
@@ -175,4 +180,4 @@ save(fig, "fig5_people")
 # write every plotted value next to the figures, so each can be checked against the write-up
 with open(OUT / "figure_data.csv", "w", encoding="utf-8", newline="") as fh:
     csv.writer(fh).writerows([("figure", "series", "size_or_comparison", "metric", "value", "ci_low", "ci_high")] + LOG)
-print("ok", len(LOG))
+print("ok", len(LOG), "plotted values; compare figure_data.csv with results/writeup/figures/figure_data.csv")

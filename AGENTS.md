@@ -23,7 +23,7 @@ What may still change, and only when the person asks:
 
 - Fixes the organisers ask for after their review (T39), and documentation corrections (READMEs, `SUMMARY.md` files, comments).
 - Committing a missing script or a results file that backs a number already in the write-up.
-- Nothing else. **Do not change any file in `results/` or `analysis/ablation/results/`, the scoring code in `shared/`, or a detector job, and do not run anything on Modal**, unless the person says the change is agreed with Abby. A changed number would no longer match the submitted write-up.
+- Nothing else. **Never overwrite the submitted figure images** (`results/writeup/figures/`, `results/combined/figures/`, `results/human/figures/auc_people_vs_detectors.png`): they are the exact images in the write-up and slides, and rerunning a figure script on a laptop changes their pixels. If you run a figure script, write to a folder outside the repo (`--out-dir`). **Do not change any file in `results/` or `analysis/ablation/results/`, the scoring code in `shared/`, or a detector job, and do not run anything on Modal**, unless the person says the change is agreed with Abby. A changed number would no longer match the submitted write-up.
 
 ## First steps in every session
 

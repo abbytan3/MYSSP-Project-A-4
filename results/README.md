@@ -13,10 +13,10 @@ Brackets hold 95% confidence intervals (CIs): the 2.5th and 97.5th percentiles o
 | `daf_anytext/figures/`, `daf_diffste/figures/` | 5 charts each (same layout as ADCD-Net's) | `analysis/figures/make_figures_t18.py` |
 | `dtd/` | `SUMMARY.md` (tables only, no charts) and `top_score_spread.csv` | `analysis/dtd/top_score_spread.py` |
 | `combined/tables/` | `detector_table.csv`, `ai_minus_handcrafted.csv`, `size_difference.csv`, `people_vs_detectors.csv`, `human_grade_breakdown.csv` (values copied as text, no rounding) | `analysis/combined/make_tables.py` |
-| `combined/figures/` | `fig_auc.png`, `fig_ruleB_recall_vs_fa.png`, `fig_location.png` | `analysis/figures/make_figures.py` |
+| `combined/figures/` | `fig_auc.png`, `fig_ruleB_recall_vs_fa.png`, `fig_location.png`: the slides' Figures 2 to 4. Submitted images: do not overwrite | `analysis/figures/make_figures.py` |
 | `human/` | People vs detectors on the 500 real stage 2 pages (see `analysis/human/README.md` for each file) | `analysis/human/people_vs_detectors.py` |
-| `human/figures/` | `auc_people_vs_detectors.png`, `detector_auc_by_people_verdict.png` | `analysis/human/make_figures.py` |
-| `writeup/figures/` | The write-up's Figures 2 to 5 (PNG, 300 dpi) and `figure_data.csv` (all 67 plotted values with 95% CIs) | `analysis/figures/make_writeup_figures.py` |
+| `human/figures/` | `auc_people_vs_detectors.png` (the slides' Figure 5; submitted image, do not overwrite), `detector_auc_by_people_verdict.png` | `analysis/human/make_figures.py` |
+| `writeup/figures/` | The write-up's Figures 2 to 5 (PNG, 300 dpi) and `figure_data.csv` (all 67 plotted values with 95% CIs). Submitted images: do not overwrite | `analysis/figures/make_writeup_figures.py` |
 | `adcd/tile_check/` | Printed output of the page-size checks: `tile_count_vs_label.txt` (AUC of tile count and page area alone, and ADCD-Net's AUC inside tile-count groups) and `tile_count_vs_top.txt` (top score against tile count) | `analysis/tile_check/` scripts, run on the private ADCD-Net outputs |
 | `../analysis/ablation/results/` | `ablation_scores.csv` (240 rows) and `contrast_summary.csv` (148 paired contrasts) | `analysis/ablation/` scripts |
 

@@ -35,5 +35,5 @@ Direction: people score 5 = looks genuine, so people "edited-ness" is 6 minus th
 ## Notes
 
 - The test `test_joined_file_has_only_the_allowed_columns_and_never_goes_inside_the_repo` checks that `join_ratings.py` refuses to write inside a git repo. Run the tests from a `git clone`: in a ZIP download there is no `.git` folder, so this one test fails and leaves a `should_not_exist/` folder (holding a one-row made-up test file) behind; delete it.
-- The two charts were drawn during the analysis and their axis labels use older wording for the AUC = 0.5 line; the write-up's version is Figure 5 in `results/writeup/figures/`, redrawn from the same table (`results/human/auc.csv`) with the final wording.
+- `results/human/figures/auc_people_vs_detectors.png` is the slides' Figure 5 exactly as submitted, so do not redraw or overwrite it (its labels use the analysis wording). The write-up's version is Figure 5 in `results/writeup/figures/`, drawn from the same table (`results/human/auc.csv`).
 - Headline values (people vs every detector setting) are collected in `results/README.md`.
