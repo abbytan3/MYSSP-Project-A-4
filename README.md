@@ -3,7 +3,6 @@
 **MYSSP 2026, Project A-4** · Abby Tan Yi Pei, Alycia Yeak Yinyi, Muhammad Nazhan bin Zailani · Mentor and co-author: Jia Yu Lim
 
 - **Project page** (write-up, video and Demo Day slides): https://myssp.myresearchguide.org/#/project-archive/project/financial-document-tampering
-- **Status:** submitted on 20 Nov 2026; Demo Day on 28 Nov 2026. The study is finished: this repo is the public record of the code, score tables and charts behind the submission. Every number in the write-up, slides and project page comes from a file in `results/` or `analysis/ablation/results/`, and the write-up's Figures 2 to 5 are redrawn by a script in this repo (see [Write-up figures and checks](#write-up-figures-and-checks)).
 
 ## What this project does
 
