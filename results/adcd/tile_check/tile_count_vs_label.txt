@@ -1,0 +1,25 @@
+1. Tile count per page (min / median / max), pages:
+   edited       3 / 15 / 25    n = 1006
+   untouched    3 / 15 / 25    n = 644
+   AI-edited    3 / 15 / 25    n = 506
+   handcrafted  3 / 15 / 25    n = 500
+
+2. AUC of page size alone (no detector), 95% range from 1000 document resamples, seed 42:
+   tile count, edited vs untouched        0.511 [0.491, 0.531]  (n = 1006 vs 644)
+   tile count, AI vs untouched            0.506 [0.482, 0.532]  (n = 506 vs 644)
+   tile count, handcrafted vs untouched   0.516 [0.491, 0.539]  (n = 500 vs 644)
+   page area, edited vs untouched         0.513 [0.492, 0.533]  (n = 1006 vs 644)
+   page area, AI vs untouched             0.507 [0.481, 0.534]  (n = 506 vs 644)
+   page area, handcrafted vs untouched    0.518 [0.493, 0.543]  (n = 500 vs 644)
+
+3. ADCD-Net full-size top score, AUC inside tile-count groups (group closes at >= 30 edited and >= 30 untouched):
+   all pages      0.533 [0.510, 0.557]  (n = 1006 vs 644)
+   tiles 3-6      0.510 [0.369, 0.641]  (n = 53 edited vs 32 untouched)  SMALL
+   tiles 8        0.452 [0.331, 0.568]  (n = 63 edited vs 42 untouched)  SMALL
+   tiles 9-10     0.568 [0.523, 0.616]  (n = 297 edited vs 193 untouched)
+   tiles 12-15    0.524 [0.481, 0.567]  (n = 389 edited vs 261 untouched)
+   tiles 16-20    0.558 [0.475, 0.638]  (n = 100 edited vs 56 untouched)
+   tiles 21-25    0.508 [0.435, 0.584]  (n = 104 edited vs 60 untouched)
+   (SMALL = fewer than 50 pages in either class; its range is wide.)
+
+   cross-check: overall AUC here 0.532819 [0.509682, 0.556533] vs results file 0.532819 [0.509682, 0.556533]

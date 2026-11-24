@@ -1,5 +1,7 @@
 # From a finished detector run to scored results
 
+The step-by-step guide each detector owner followed in Nov 2026 to turn a finished Modal run into the committed score tables. All four detector folders (`adcd`, `dtd`, `daf_anytext`, `daf_diffste`) were scored this way, with 0 missing pages. The scripts in this folder are listed at the end.
+
 For the owner of a detector (ADCD-Net, DTD, DAF). Your run has written `out/<detector>/shrink512/` and `out/<detector>/full/` on the Modal Volume `a4-data`. Each folder holds 1,650 `.npz` files, `run_info.json` and `run_log.csv`. `<detector>` is the folder name under `out/`; if your detector has several weights, each has its own folder name and you repeat the steps for each. Do these steps in order. Your coding agent can run every command. The Volume is deleted at the end, so copy your outputs first.
 
 `<private>` below means a folder **outside this repo**, for example `~/a4_private` (Windows: `C:\Users\you\a4_private`). Never inside the repo.
@@ -30,11 +32,11 @@ pip install -r shared/requirements.txt
 python3 shared/score.py --detector <detector> --sample <private>/sample.csv --out-root <private>/outputs --results-dir results/<detector>
 ```
 
-Score **both sizes in the same run**. `scores.csv` only keeps the sizes of one run, so scoring one size later overwrites the other. It takes about a minute and prints the headline numbers with their 95% ranges.
+Score **both sizes in the same run**. `scores.csv` only keeps the sizes of one run, so scoring one size later overwrites the other. It takes about a minute and prints the headline numbers with their 95% CIs.
 
 ## 4. Check what landed
 
-`results/<detector>/` now holds `scores.csv` (every metric, with ranges and counts, plus breakdowns), `differences.csv` (AI minus handcrafted, and `shrink512` minus `full`) and `score_info.json` (seed, cut-offs, a copy of `run_info.json`, missing pages). Open `score_info.json`: `pages_missing` must be 0 for both sizes. Pages scored should be 1,650.
+`results/<detector>/` now holds `scores.csv` (every metric, with CIs and counts, plus breakdowns), `differences.csv` (AI minus handcrafted, and `shrink512` minus `full`) and `score_info.json` (seed, cut-offs, a copy of `run_info.json`, missing pages). Open `score_info.json`: `pages_missing` must be 0 for both sizes. Pages scored should be 1,650.
 
 ## 5. Commit
 
@@ -43,3 +45,14 @@ Score **both sizes in the same run**. `scores.csv` only keeps the sizes of one r
 - **Charts (optional):** after results exist, `python3 analysis/figures/make_figures.py` draws the cross-detector charts into `analysis/figures/out/` (not committed).
 
 When you finish, update your task on the command centre sheet.
+
+## Scripts in this folder
+
+| File | What it does |
+|---|---|
+| `sample.py` | Picks the 1,650 pages from the private stage 1 split and gives them anonymous IDs (reads metadata only) |
+| `upload_pages.py` | Uploads the sampled pages and `meta/sample.csv` to the Volume in batches of 100, then checks them |
+| `output_format.py` | The one output format every detector writes (`top`, `shape`, packed `flag`), plus the DAF box-to-map helper |
+| `check_outputs.py` | The real-page check in step 2 |
+| `score.py` | Rule A, rule B (2-fold cross-fitting), AUC, location metrics and 95% CIs (1,000 document resamples, seed 42) |
+| `test_*.py` | Tests on small made-up arrays: `python3 -m pytest shared -q` |

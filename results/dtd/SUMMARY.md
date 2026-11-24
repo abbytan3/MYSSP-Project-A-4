@@ -1,6 +1,6 @@
 # DTD analysis summary (T17)
 
-DTD (CVPR 2023, released DocTamper weights) scored by `shared/score.py`. Numbers come from `results/dtd/scores.csv` and `results/dtd/differences.csv`, except the score-ceiling section (see its note). Ranges are 95% bootstrap ranges over documents. This file says what the numbers show, not why. All pages: 1,006 edited pages (1,093 edits: 541 AI, 552 handcrafted) and 644 untouched pages, at both sizes. Tables only; no figures were drawn for DTD.
+DTD (CVPR 2023, released DocTamper weights) scored by `shared/score.py`. Numbers come from `results/dtd/scores.csv` and `results/dtd/differences.csv`, except the score-ceiling section (see its note). Brackets and "x to y" pairs are 95% confidence intervals (CIs): 1,000 bootstrap resamples of documents, seed 42. This file says what the numbers show, not why. All pages: 1,006 edited pages (1,093 edits: 541 AI, 552 handcrafted) and 644 untouched pages, at both sizes. Tables only; no figures were drawn for DTD.
 
 ## RQ1: detection
 
@@ -18,7 +18,7 @@ AUC, rule B recall and rule B false-alarm rate (rule B cut-offs by 2-fold cross-
 - **Rule A** (any pixel at or above 0.5), all pages: at shrink512 it flags every page (recall 1.000, false-alarm rate 1.000). At full, recall is 0.847 (0.821 to 0.872) and the false-alarm rate is 0.829 (0.800 to 0.857).
 - **AI minus handcrafted:**
 
-| Size | Metric | Difference | Range | Range excludes 0? |
+| Size | Metric | Difference | CI | CI excludes 0? |
 |---|---|---|---|---|
 | shrink512 | AUC | +0.018 | -0.009 to +0.045 | no |
 | shrink512 | rule B recall | +0.008 | -0.000 to +0.018 | no |
@@ -47,7 +47,7 @@ An edit is found if a flagged region overlaps its box. False regions are counted
 
 ## RQ3: conditions
 
-AUC with 95% range, shrink512 then full. n = edited pages; untouched pages are 644 for every editor/method group.
+AUC with 95% CI, shrink512 then full. n = edited pages; untouched pages are 644 for every editor/method group.
 
 | Group | n edited (untouched) | shrink512 | full |
 |---|---|---|---|
@@ -63,7 +63,7 @@ AUC with 95% range, shrink512 then full. n = edited pages; untouched pages are 6
 | scan_sim | 211 (130) | 0.528 (0.467 to 0.591) | 0.547 (0.483 to 0.615) |
 
 - No group has fewer than 30 pages (the smallest is pdf_edit, 72 edited pages).
-- The only range that excludes 0.5 is UDiffText at full (bold). It is 1 of 20 ranges.
+- The only CI that excludes 0.5 is UDiffText at full (bold). It is 1 of 20 CIs.
 - The groups are shown side by side and are not compared with each other (`differences.csv` has no pairwise rows for editor, method or capture).
 
 ## Cross-detector context
@@ -117,9 +117,9 @@ At full, every PNG-source page has a top score of 0.9117 or more, edited and unt
 ## Read with care
 
 - **Rule B flags nearly every page.** The false-alarm rate is 0.995 at shrink512 and 0.997 at full, almost the same as recall. Rule B recall alone says little.
-- **AUC is at or near chance (0.5).** All pages: 0.507 (0.482 to 0.532) at shrink512 and 0.505 (0.478 to 0.532) at full, both ranges include 0.5.
+- **AUC is close to 0.5.** All pages: 0.507 (0.482 to 0.532) at shrink512 and 0.505 (0.478 to 0.532) at full, both CIs include 0.5.
 - **Location recall comes with very large false-region counts** (9,164 at shrink512, 34,754 at full). Never quote recall without them. Precision is 0.105 and 0.011.
-- **The AI vs handcrafted AUC gap exists at full only** (+0.060, range excludes 0; at shrink512 +0.018, range includes 0). It is small next to the ranges of single groups.
+- **The AI vs handcrafted AUC gap exists at full only** (+0.060, CI excludes 0; at shrink512 +0.018, CI includes 0). It is small next to the CIs of single groups.
 - **Rule A is not a result to compare sizes with.** It flags every page at shrink512 because every page's top score is above 0.5.
 - **The scores are squeezed into a narrow band at shrink512** (0.9065 to 0.9325 for every page), and PNG-source pages are squeezed at full. A tampering signal would have to show up as a difference inside that band.
 - **The link between the PNG pages at full size and the quality-100 re-save is a suggestion, untested.** PNG pages go through that re-save. The re-save counts for the full run could not be recovered (see `docs/decisions.md`, 20 Nov T14 lines), so it rests on the job code. No test was run that changes the re-save.

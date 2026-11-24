@@ -1,0 +1,14 @@
+[full]
+--- 1650 pages | top score 0.6911 to 0.9627 | tiles per page 3 to 25 | bootstrap by document
+  pearson correlation of top with tile count: 0.306 (95% range 0.264 to 0.366)
+ spearman correlation of top with tile count: 0.486 (95% range 0.436 to 0.536)
+  mean top, 1-4 tiles : 0.912 (95% range 0.897 to 0.923), n = 20 pages
+  mean top, 5-12 tiles: 0.945 (95% range 0.944 to 0.946), n = 679 pages
+  mean top, 13+ tiles : 0.951 (95% range 0.951 to 0.952), n = 951 pages
+[shrink512]
+--- 1650 pages | top score 0.2805 to 0.9412 | tiles per page 3 to 25 | bootstrap by document
+  pearson correlation of top with tile count: -0.398 (95% range -0.459 to -0.332)
+ spearman correlation of top with tile count: -0.359 (95% range -0.427 to -0.292)
+  mean top, 1-4 tiles : 0.637 (95% range 0.580 to 0.693), n = 20 pages
+  mean top, 5-12 tiles: 0.628 (95% range 0.614 to 0.641), n = 679 pages
+  mean top, 13+ tiles : 0.570 (95% range 0.553 to 0.586), n = 951 pages

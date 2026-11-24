@@ -1,5 +1,7 @@
 # Setup: GPU and coding space
 
+> **Status (24 Nov 2026):** all detector runs are finished. To check the results you only need Python and a clone of this repo: see the main README, "Level A". The steps below are how each team member set up for the GPU runs and the coding agents, kept as the record (and for any rerun agreed with Abby).
+
 Do this once, before your first task. It takes about 30 to 45 minutes. When you finish, mark task T06 and T07 Done on the command centre sheet.
 
 **Three rules before you start**
